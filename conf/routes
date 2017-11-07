@@ -1,17 +1,28 @@
-# Routes
 # This file defines all application routes (Higher priority routes first)
-# ~~~~
+# COLABORADOR + SOLICITUDES ; BENEFICIO + PRESUPUESTOS
+GET     /                           	controllers.HomeController.index
+GET 	/main							controllers.HomeController.main
+POST    /login 							controllers.HomeController.login
+# Dashboards
+GET     /efectividad 					controllers.HomeController.efectividad
+GET     /popularidad					controllers.HomeController.popularidad
+# Flujo ingreso solicitud beneficio
+GET 	/colaboradores					controllers.HomeController.colaboradores
+GET     /colaborador/:id				controllers.HomeController.colaborador(id)
+# Flujo ingreso presupuesto
+GET     /beneficios	 					controllers.HomeController.beneficios
+GET     /beneficio/:id					controllers.HomeController.beneficio(id)
+# API
+GET		/api/colaboradores 				controllers.Api.colaboradores
+GET		/api/colaborador/:id			controllers.Api.colaborador(id)
+#GET 	/api/beneficios					controllers.Api.beneficios
+#GET 	/api/beneficio/:id				controllers.Api.beneficio(id)
+#GET 	/api/beneficio/:id/form			controllers.Api.beneficioForm
+#PUT	/api/presupuesto				controllers.Api.putPresupuesto
+#PUT	/api/solicitud					controllers.Api.putSolicitud
 
-# An example controller showing a sample home page
-GET     /                           controllers.HomeController.index
-# An example controller showing how to use dependency injection
-GET     /count                      controllers.CountController.count
-# An example controller showing how to write asynchronous code
-GET     /message                    controllers.AsyncController.message
-
-POST    /login 						controllers.HomeController.login
-
-GET		/beneficios					controllers.HomeController.beneficios
+# API Dashboards
+#GET 	/api/solicitudes/area			controllers.Api.solicitudesPorArea
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

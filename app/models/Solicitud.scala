@@ -2,19 +2,18 @@ package models
 
 import javax.inject.Inject
 
-import anorm.{ Macro, RowParser}, Macro.ColumnNaming
+import anorm.{ Macro, RowParser, SqlParser}, Macro.ColumnNaming
 import anorm.SqlParser._
 import anorm._
 import play.api.db.DBApi
+import play.api.libs.json.JsValue
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
 
-
 case class Solicitud(area: String, beneficioId: Int, beneficio: String, nSolicitudes: Int, porcentajeAprobacion: Double, beneficioPorArea: Int)
 
-@javax.inject.Singleton
-class BeneficiosDAO @Inject()(dbapi: DBApi)(implicit ec: ExecutionContext) {
+class SolicitudDAo @Inject()(dbapi: DBApi)(implicit ec: ExecutionContext) {
 
 	private val db = dbapi.database("default")
 
@@ -39,4 +38,12 @@ class BeneficiosDAO @Inject()(dbapi: DBApi)(implicit ec: ExecutionContext) {
 			"""
 			).as(parserSolicitudesPorArea.*)
 	})(ec)
+
+	def putSolicitud(colaboradorId: Int, 
+					beneficioId: Int,
+					solicitado: String,
+					resuelto: Option[Boolean]) = {
+
+	}
+
 }
