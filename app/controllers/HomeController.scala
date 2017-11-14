@@ -16,14 +16,16 @@ import scala.concurrent.ExecutionContext.Implicits.global
 @Singleton
 class HomeController extends Controller {
 
-	implicit val personFormat = Json.format[Solicitud]
-
 	def index = Action { 
-		Ok(html.indexdos())
+		Ok(html.efectividad())
 	}
 
 	def efectividad = Action {
 		Ok(html.efectividad())
+	}
+
+	def respuesta = Action {
+		Ok(html.respuesta())
 	}
 
 	def popularidad = Action {
@@ -34,22 +36,20 @@ class HomeController extends Controller {
 		Ok(html.colaboradores())
 	}
 
-	//Colaborador + solicitudes
 	def colaborador(id: String) = Action {
-		Ok(html.colaborador(id))
+		Ok(html.colaborador())
 	}
 
 	def beneficios = Action {
 		Ok(html.beneficios())
 	}
 
-	// beneficio + tabla presupuestos 
 	def beneficio(id: String) = Action {
-		Ok(html.beneficio(id))
+		Ok(html.beneficio())
 	}
 
 	def main = Action {
-		Ok(html.login("Ingreso"))
+		Ok(html.auth("Ingreso"))
 	}
 
 	def login = Action { req:  Request[AnyContent] => 
@@ -70,8 +70,6 @@ object Login {
 	}
 }
 
-
-
 object User {
 	def auth[A](req: Request[A]): Option[User] = {
 		val Re = """(?<=Bearer\s)\S+""".r
@@ -82,7 +80,6 @@ object User {
 			.map(t => t._2)
 			.map(n => new User(n))
 	}
-
 	def apply(name: String) {
 		new User(name)
 	}

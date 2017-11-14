@@ -7,19 +7,20 @@ import anorm.SqlParser._
 import anorm._
 import play.api.db.DBApi
 import play.api.libs.json.JsValue
+import java.util.Date
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext
 
-case class Solicitud(area: String, beneficioId: Int, beneficio: String, nSolicitudes: Int, porcentajeAprobacion: Double, beneficioPorArea: Int)
+case class SolicitudPorArea(area: String, beneficioId: Int, beneficio: String, nSolicitudes: Int, porcentajeAprobacion: Double, beneficioPorArea: Int)
 
-class SolicitudDAo @Inject()(dbapi: DBApi)(implicit ec: ExecutionContext) {
+class Solicitud @Inject()(dbapi: DBApi)(implicit ec: ExecutionContext) {
 
 	private val db = dbapi.database("default")
 
-	private[models] val parserSolicitudesPorArea = Macro.namedParser[Solicitud](ColumnNaming.SnakeCase)
+	private[models] val parserSolicitudesPorArea = Macro.namedParser[SolicitudPorArea](ColumnNaming.SnakeCase)
 
-	def porArea: Future[List[Solicitud]] = Future(db.withConnection { implicit connection =>
+	def porArea: Future[List[SolicitudPorArea]] = Future(db.withConnection { implicit connection =>
 		SQL(
 			"""
 			SELECT c.area,
@@ -39,11 +40,36 @@ class SolicitudDAo @Inject()(dbapi: DBApi)(implicit ec: ExecutionContext) {
 			).as(parserSolicitudesPorArea.*)
 	})(ec)
 
-	def putSolicitud(colaboradorId: Int, 
+	def create(colaboradorId: Int, 
 					beneficioId: Int,
-					solicitado: String,
-					resuelto: Option[Boolean]) = {
-
+					solicitado: Option[Date],
+					resuelto: Option[Date],
+					esAprobado: Option[Boolean],
+					monto: Option[Int],
+					monedaId: Option[Int]) = {
+		insert(SQL(
+			"""
+			INSERT INTO solicitud(colaborador_id, beneficio_id, solicitado, resuelto, es_aprobado, monto, moneda_id)
+			VALUES ({colaboradorId}, {beneficioId}, {solicitado}, {resuelto}, {esAprobado}, {monto}, {monedaId})
+			"""
+		).on('colaboradorId -> colaboradorId,
+			'beneficioId -> beneficioId,
+			'solicitado -> solicitado,
+			'resuelto -> resuelto,
+			'esAprobado -> esAprobado,
+			'monto -> monto,
+			'monedaId -> monedaId
+			)
+		)
 	}
 
+	def update(modified: Option[Map[String, String]], id: String) = {
+		//modified.map( m => m.map( x => 
+	}
+
+	def insert(query: SimpleSql[Row]): Option[Long] = {
+		db.withConnection{ implicit conn => 
+			query.executeInsert()
+		}
+	}
 }

@@ -75,34 +75,7 @@
         <!-- ============================================================== -->
         <!-- Left Sidebar - style you can find in sidebar.scss  -->
         <!-- ============================================================== -->
-        <div class="navbar-default sidebar" role="navigation">
-            <div class="sidebar-nav slimscrollsidebar">
-                <div class="sidebar-head">
-                    <h3><span class="fa-fw open-close"><i class="ti-close ti-menu"></i></span> <span class="hide-menu">Navigation</span></h3>
-                </div>
-                <ul class="nav" id="side-menu">
-                    <li style="padding: 70px 0 0;">
-                        <a href="index.html" class="waves-effect"><i class="fa fa-table fa-fw" aria-hidden="true"></i>Efectividad</a>
-                    </li>
-                    <li>
-                        <a href="profile.html" class="waves-effect"><i class="fa fa-table fa-fw" aria-hidden="true"></i>Popularidad</a>
-                    </li>
-                    <li>
-                        <a href="basic-table.html" class="waves-effect"><i class="fa fa-clock-o fa-fw" aria-hidden="true"></i>Tiempo de Respuesta</a>
-                    </li>
-                    <li>
-                        <a href="basic-table.html" class="waves-effect"><i class="fa fa-table fa-fw" aria-hidden="true"></i>Beneficios</a>
-                    </li>
-                    <li>
-                        <a href="basic-table.html" class="waves-effect"><i class="fa fa-user fa-fw" aria-hidden="true"></i>Colaboradores</a>
-                    </li>
-                </ul>
-                <div class="center p-20">
-                     <a href="https://wrappixel.com/templates/ampleadmin/" target="_blank" class="btn btn-danger btn-block waves-effect waves-light">Ingresar Beneficio</a>
-                 </div>
-            </div>
-            
-        </div>
+		@sidebar("efectividad")
         <!-- ============================================================== -->
         <!-- End Left Sidebar -->
         <!-- ============================================================== -->
@@ -113,10 +86,10 @@
             <div class="container-fluid">
                 <div class="row bg-title">
                     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-                        <h4 class="page-title">Popularidad</h4> </div>
+                        <h4 class="page-title">Efectividad</h4> </div>
                     <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
                         <ol class="breadcrumb">
-							<li><a href="#">Dashboards</a> / Popularidad</li>
+							<li><a href="#">Dashboards</a> / Efectividad</li>
                         </ol>
                     </div>
                     <!-- /.col-lg-12 -->
@@ -129,7 +102,7 @@
                 <div class="row">
                     <div class="col-lg-4 col-sm-6 col-xs-12">
                         <div class="white-box analytics-info">
-                            <h3 class="box-title">Costo promedio 2017</h3>
+                            <h3 class="box-title">Costo promedio YTD</h3>
                             <ul class="list-inline two-part">
                                 <li>
                                     <div id="sparklinedash"></div>
@@ -140,7 +113,7 @@
                     </div>
                     <div class="col-lg-4 col-sm-6 col-xs-12">
                         <div class="white-box analytics-info">
-                            <h3 class="box-title">Aceptación promedio</h3>
+                            <h3 class="box-title">Aceptación promedio YTD</h3>
                             <ul class="list-inline two-part">
                                 <li>
                                     <div id="sparklinedash2"></div>
@@ -151,7 +124,7 @@
                     </div>
                     <div class="col-lg-4 col-sm-6 col-xs-12">
                         <div class="white-box analytics-info">
-                            <h3 class="box-title">Costo total</h3>
+                            <h3 class="box-title">Costo total YTD</h3>
                             <ul class="list-inline two-part">
                                 <li>
                                     <div id="sparklinedash3"></div>
@@ -169,74 +142,6 @@
                             <h3 class="box-title">Beneficios v/s aprobación v/s uso</h3>
 
 <div id="bubbleChart" style="height: 400px; min-width: 310px; max-width: 900px; margin: 0 auto"></div>
-                        </div>
-                    </div>
-                </div>
-                <!-- /.row -->
-                <!--row -->
-                <div class="row">
-                    <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12">
-                        <div class="white-box">
-                            <h3 class="box-title">Formulario ingreso solicitud</h3>
-							<style>
-form#solicitud label {
-    display: block;
-    float: left;
-    width: 50%;
-    height: 30px;
-    text-align: right;
-    padding-right: 10px;
-    margin-top: 5px;
-	font-weight:800;
-}
-
-form#solicitud select, 
-form#solicitud input {
-    display: block;
-    float: left;
-    width: 50%;
-    height: 30px;
-}
-							</style>
-							<form id="solicitud">
-								<div class="row">
-									<label for="beneficio" id="solicitud-label">
-										Nombre Beneficio
-									</label>
-									<select name="beneficio" id="beneficio">
-										<option value="" disabled selected>
-											Selecciona un beneficio
-										</option> 
-										<option value="value2" selected>Dental</option>
-										<option value="value3">Cumpleaños</option>
-									</select>
-								</div>
-								<div class="row">
-									<label for="monto">
-										¿Está aprobado?
-									</label>
-									<input type="checkbox" id="aprobado"> </input>
-								</div>
-								<div class="row">
-									<label for="monto"> ¿Cuál es el costo del beneficio?</label>
-									<input type="number" id="monto"> </input>
-								</div>
-								<div class="row">
-									<label for="moneda" id="moneda-label">
-										Tipo moneda
-									</label>
-									<select name="beneficio" id="beneficio">
-										<option value="" disabled selected>
-											Selecciona una moneda
-										</option> 
-										<option value="value2" selected>Pesos</option>
-										<option value="value3">Soles</option>
-									</select>
-								</div>
-
-								<button name="button" type="button">Ingresar Beneficio</button>
-
-							</form>
                         </div>
                     </div>
                 </div>

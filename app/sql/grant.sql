@@ -27,5 +27,6 @@ TO basf;
 ALTER DEFAULT PRIVILEGES FOR ROLE schma_admin
 GRANT INSERT, UPDATE, DELETE, TRUNCATE ON TABLES TO schma_mgr;  -- + write, TRUNCATE optional
 
-ALTER DEFAULT PRIVILEGES FOR ROLE schma_admin
-GRANT USAGE, SELECT, UPDATE ON SEQUENCES TO schma_mgr;  -- SELECT, UPDATE are optional 
+--https://dba.stackexchange.com/questions/117109/how-to-manage-default-privileges-for-users-on-a-database-vs-schema/117661#117661
+ALTER DEFAULT PRIVILEGES FOR ROLE federico -- Note Alter default privileges for the role that creates objects (federico), which in turn grants privileges to another role (basf).
+GRANT USAGE, SELECT, UPDATE ON SEQUENCES TO basf;  

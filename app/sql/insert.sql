@@ -43,3 +43,13 @@ INSERT INTO solicitud(colaborador_id, beneficio_id, solicitado, resuelto, es_apr
 
 INSERT INTO beneficio(nombre, subcategoria_id, es_transversal)
 	VALUES ('Benef T1', 2, true);
+
+/* \copy */
+COPY colaborador(c1, c2, c3) 
+FROM '/home/federico/BASF/colaboradores.csv' 
+DELIMITER ',' 
+FORMAT CSV
+ENCODING 'LATIN1'
+HEADER true;
+
+

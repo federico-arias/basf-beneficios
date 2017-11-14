@@ -6,6 +6,7 @@ POST    /login 							controllers.HomeController.login
 # Dashboards
 GET     /efectividad 					controllers.HomeController.efectividad
 GET     /popularidad					controllers.HomeController.popularidad
+GET     /respuesta						controllers.HomeController.respuesta
 # Flujo ingreso solicitud beneficio
 GET 	/colaboradores					controllers.HomeController.colaboradores
 GET     /colaborador/:id				controllers.HomeController.colaborador(id)
@@ -14,15 +15,16 @@ GET     /beneficios	 					controllers.HomeController.beneficios
 GET     /beneficio/:id					controllers.HomeController.beneficio(id)
 # API
 GET		/api/colaboradores 				controllers.Api.colaboradores
+GET 	/api/colaborador/search			controllers.Api.search(searchterm)
 GET		/api/colaborador/:id			controllers.Api.colaborador(id)
-#GET 	/api/beneficios					controllers.Api.beneficios
-#GET 	/api/beneficio/:id				controllers.Api.beneficio(id)
-#GET 	/api/beneficio/:id/form			controllers.Api.beneficioForm
-#PUT	/api/presupuesto				controllers.Api.putPresupuesto
-#PUT	/api/solicitud					controllers.Api.putSolicitud
+GET 	/api/beneficios					controllers.Api.beneficios
+GET 	/api/beneficio/:id				controllers.Api.beneficio(id)
+GET 	/api/beneficio/:id/form			controllers.Api.beneficioForm(id)
+PUT		/api/presupuesto				controllers.Api.putPresupuesto
+PUT		/api/solicitud					controllers.Api.putSolicitud
 
 # API Dashboards
-#GET 	/api/solicitudes/area			controllers.Api.solicitudesPorArea
+GET 	/api/solicitudes/area			controllers.Api.solicitudesPorArea
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

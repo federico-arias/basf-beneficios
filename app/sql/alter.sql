@@ -15,11 +15,15 @@ ALTER TABLE beneficio
 	ALTER COLUMN id SET DEFAULT nextval('beneficio_id_seq');
 ALTER SEQUENCE beneficio_id_seq OWNED BY beneficio.id;
 
+CREATE SEQUENCE presupuesto_id_seq;
+ALTER TABLE presupuesto
+	ALTER COLUMN id SET DEFAULT nextval('presupuesto_id_seq');
+ALTER SEQUENCE presupuesto_id_seq OWNED BY presupuesto.id;
+
 CREATE SEQUENCE solicitud_id_seq;
 ALTER TABLE solicitud
 	ALTER COLUMN id SET DEFAULT nextval('solicitud_id_seq');
 ALTER SEQUENCE solicitud_id_seq OWNED BY solicitud.id;
-
 
 ALTER TABLE beneficio
 	DROP COLUMN presupuesto_id;
@@ -49,4 +53,5 @@ ALTER TABLE solicitud
 ALTER TABLE solicitud
 	ADD CONSTRAINT fk_moneda_id FOREIGN KEY (moneda_id)
 		REFERENCES moneda (id);
+	
 

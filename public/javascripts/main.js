@@ -4,13 +4,23 @@ const jwt = document.cookie.split("=").reduce((acc, item) => acc == "jwt" ? item
 var hs = new Headers();
 hs.append("Authorization", "Bearer " + jwt)
 const opts = {method: 'GET', headers: hs}
-const dataPromise = getJson('/beneficios', opts)
+const dataPromise = getJson('/api/solicitudes/area', opts)
 
 dataPromise
 	.then(plotTable);
 	//.then(plotBarChart)
 	//.then(plotPieChart)
 	
+
+function filter(o) {
+	var keys = ['area', 'beneficio', 'nSolicitudes', 'porcentajeAprobacion', 'beneficioPorArea'];
+	return Object.keys(o)
+	  .filter(key => keys.includes(key))
+	  .reduce((obj, key) => {
+		obj[key] = o[key];
+		return obj;
+	  }, {});
+}
 
 function getJson(url, opts) {
 	opts = opts || {};
@@ -19,7 +29,9 @@ function getJson(url, opts) {
 
 function plotTable(data) {
 	let fragment = document.createDocumentFragment();
-	data
+	console.log(data);
+	data.map(filter)
+		.map( o => Object.assign({}, o, {porcentajeAprobacion: Math.floor(o.porcentajeAprobacion * 100)}))
 		.forEach( row => {
 			var tr = document.createElement('tr');
 			Object.keys(row).forEach( function(col) {
@@ -39,7 +51,6 @@ function plotTable(data) {
 		.appendChild(fragment);
 	return data;
 }
-
 
 Highcharts.chart('bubbleChart', {
     bubble: {
@@ -89,7 +100,7 @@ Highcharts.chart('bubbleChart', {
         headerFormat: '<table>',
         pointFormat: '<tr><th colspan="2"><h3>{point.country}</h3></th></tr>' +
             '<tr><th>Popularidad:</th><td>{point.x}</td></tr>' +
-            '<tr><th>Costo:</th><td>{point.y}g</td></tr>' +
+            '<tr><th>Costo:</th><td>{point.y} MM</td></tr>' +
             '<tr><th>Aprobación:</th><td>{point.z}%</td></tr>',
         footerFormat: '</table>',
         followPointer: true
