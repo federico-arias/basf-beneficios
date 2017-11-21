@@ -19,6 +19,25 @@
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 <![endif]-->
+<style>
+
+.highcharts-color-0 {
+  fill: #004893;
+}
+
+.highcharts-color-1 {
+  fill: #00743a;
+}
+
+.highcharts-color-2 {
+  fill: #f49700;
+}
+  
+.highcharts-color-3 {
+	fill: #bf0029;
+}
+
+</style>
 </head>
 
 <body class="fix-header">
@@ -69,36 +88,20 @@
                 <!-- ============================================================== -->
                 <!-- .row -->
                 <div class="row">
+                    <div class="col-lg-8 col-sm-6 col-xs-12">
+                        <div class="white-box analytics-info">
+                            <h3 class="box-title">Indicadores de popularidad</h3>
+							<p>Los siguientes gráficos miden la popularidad de los beneficios a partir del número de solicitudes recibidas en el año en curso.</p>
+                        </div>
+                    </div>
                     <div class="col-lg-4 col-sm-6 col-xs-12">
                         <div class="white-box analytics-info">
-                            <h3 class="box-title">Costo promedio 2017</h3>
+                            <h3 class="box-title">Solicitudes per cápita YTD</h3>
                             <ul class="list-inline two-part">
                                 <li>
                                     <div id="sparklinedash"></div>
                                 </li>
-                                <li class="text-right"><i class="ti-arrow-up text-success"></i> <span class="counter text-success">$200.000</span></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-sm-6 col-xs-12">
-                        <div class="white-box analytics-info">
-                            <h3 class="box-title">Aceptación promedio</h3>
-                            <ul class="list-inline two-part">
-                                <li>
-                                    <div id="sparklinedash2"></div>
-                                </li>
-                                <li class="text-right"><i class="ti-arrow-up text-purple"></i> <span class="counter text-purple">80%</span></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-sm-6 col-xs-12">
-                        <div class="white-box analytics-info">
-                            <h3 class="box-title">Costo total</h3>
-                            <ul class="list-inline two-part">
-                                <li>
-                                    <div id="sparklinedash3"></div>
-                                </li>
-                                <li class="text-right"><i class="ti-arrow-up text-info"></i> <span class="counter text-info">$254M</span></li>
+                                <li class="text-right"><i class="ti-arrow-up text-success"></i> <span class="counter text-success">5.5</span></li>
                             </ul>
                         </div>
                     </div>
@@ -108,9 +111,21 @@
                 <div class="row">
                     <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12">
                         <div class="white-box">
-                            <h3 class="box-title">Beneficios v/s aprobación v/s uso</h3>
+							<!--<h3 class="box-title">Beneficios v/s aprobación v/s uso</h3>-->
 
-<div id="bubbleChart" style="height: 400px; min-width: 310px; max-width: 900px; margin: 0 auto"></div>
+							<div id="top-5-mujeres"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.row -->
+                <!--row -->
+                <div class="row">
+                    <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12">
+                        <div class="white-box">
+							<!--<h3 class="box-title">Beneficios v/s aprobación v/s uso</h3>-->
+
+							<div id="solicitudes-por-categoria">
+							</div>
                         </div>
                     </div>
                 </div>
@@ -160,7 +175,314 @@
     </div>
 	<script src="https://code.highcharts.com/highcharts.js"></script>
 	<script src="https://code.highcharts.com/highcharts-more.js"></script>
-	<script src="@routes.Assets.versioned("javascripts/main.js")" type="text/javascript"></script>
+	<script src="https://code.highcharts.com/modules/drilldown.js"></script>
+	<script type="text/javascript">
+Highcharts.setOptions({
+	lang:{
+		drillUpText: 'Volver a {series.name}'
+	}
+});
+
+Highcharts.chart('top-5-mujeres', {
+    chart: {
+        type: 'bar'
+    },
+    title: {
+        text: 'Top 5 solicitudes de mujeres últimos 3 años'
+    },
+    subtitle: {
+        text: '5 beneficios más solicitados por mujeres'
+    },
+    xAxis: {
+        categories: ['Benef 1', 'Benef 2', 'Benef 3', 'Benef 4', 'Benef 5'],
+        title: {
+            text: null
+        }
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: 'Número de solicitudes',
+            align: 'high'
+        },
+        labels: {
+            overflow: 'justify'
+        }
+    },
+    plotOptions: {
+        bar: {
+            dataLabels: {
+                enabled: true
+            }
+        }
+    },
+    legend: {
+        layout: 'vertical',
+        align: 'right',
+        verticalAlign: 'top',
+        x: -40,
+        y: 80,
+        floating: true,
+        borderWidth: 1,
+        backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+        shadow: true
+    },
+    credits: {
+        enabled: false
+    },
+    series: [{
+        name: 'Año 2015',
+        data: [107, 31, 635, 203, 2]
+    }, {
+        name: 'Año 2016',
+        data: [133, 156, 947, 408, 6]
+    }, {
+        name: 'Año 2017',
+        data: [1052, 954, 800, 740, 38]
+    }]
+});
+
+
+// Create the chart
+Highcharts.chart('solicitudes-por-categoria', {
+    chart: {
+        type: 'column'
+    },
+    credits: {
+    	enabled: false
+    },
+    title: {
+        text: 'Porcentaje de solicitudes por categorías'
+    },
+    subtitle: {
+        text: 'Haz clic en las columnas para ver el detalle.'
+    },
+    xAxis: {
+        type: 'category'
+    },
+    yAxis: {
+        title: {
+            text: 'Porcentaje de solicitudes'
+        }
+
+    },
+    legend: {
+        enabled: false
+    },
+    plotOptions: {
+        series: {
+            borderWidth: 0,
+            dataLabels: {
+                enabled: true,
+                format: '{point.y:.1f}%'
+            }
+        }
+    },
+
+    tooltip: {
+        headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+        pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
+    },
+
+    series: [{
+        name: 'Categorías',
+        colorByPoint: true,
+        data: [{
+            name: 'Educación',
+            y: 56.33,
+            drilldown: 'educacion'
+        }, {
+            name: 'Salud',
+            y: 24.03,
+            drilldown: 'Salud'
+        }, {
+            name: 'Familiares',
+            y: 10.38,
+            drilldown: 'familiares'
+        }, {
+            name: 'Calidad de vida',
+            y: 4.77,
+            drilldown: 'vida'
+        }, {
+            name: 'Integración',
+            y: 0.2,
+            drilldown: null
+        }]
+    }],
+    drilldown: {
+        series: [{
+            name: 'educacion',
+            id: 'educacion',
+            data: [
+                [
+                    'Beca de estudios',
+                    24.13
+                ],
+                [
+                    'Bono instituto profesional o de formación técnica',
+                    17.2
+                ],
+                [
+                    'Bono universitario o instituto profesional ',
+                    8.11
+                ]
+            ]
+        }, {
+            name: 'Chrome',
+            id: 'Chrome',
+            data: [
+                [
+                    'v40.0',
+                    5
+                ],
+                [
+                    'v41.0',
+                    4.32
+                ],
+                [
+                    'v42.0',
+                    3.68
+                ],
+                [
+                    'v39.0',
+                    2.96
+                ],
+                [
+                    'v36.0',
+                    2.53
+                ],
+                [
+                    'v43.0',
+                    1.45
+                ],
+                [
+                    'v31.0',
+                    1.24
+                ],
+                [
+                    'v35.0',
+                    0.85
+                ],
+                [
+                    'v38.0',
+                    0.6
+                ],
+                [
+                    'v32.0',
+                    0.55
+                ],
+                [
+                    'v37.0',
+                    0.38
+                ],
+                [
+                    'v33.0',
+                    0.19
+                ],
+                [
+                    'v34.0',
+                    0.14
+                ],
+                [
+                    'v30.0',
+                    0.14
+                ]
+            ]
+        }, {
+            name: 'Firefox',
+            id: 'Firefox',
+            data: [
+                [
+                    'v35',
+                    2.76
+                ],
+                [
+                    'v36',
+                    2.32
+                ],
+                [
+                    'v37',
+                    2.31
+                ],
+                [
+                    'v34',
+                    1.27
+                ],
+                [
+                    'v38',
+                    1.02
+                ],
+                [
+                    'v31',
+                    0.33
+                ],
+                [
+                    'v33',
+                    0.22
+                ],
+                [
+                    'v32',
+                    0.15
+                ]
+            ]
+        }, {
+            name: 'Safari',
+            id: 'Safari',
+            data: [
+                [
+                    'v8.0',
+                    2.56
+                ],
+                [
+                    'v7.1',
+                    0.77
+                ],
+                [
+                    'v5.1',
+                    0.42
+                ],
+                [
+                    'v5.0',
+                    0.3
+                ],
+                [
+                    'v6.1',
+                    0.29
+                ],
+                [
+                    'v7.0',
+                    0.26
+                ],
+                [
+                    'v6.2',
+                    0.17
+                ]
+            ]
+        }, {
+            name: 'Opera',
+            id: 'Opera',
+            data: [
+                [
+                    'v12.x',
+                    0.34
+                ],
+                [
+                    'v28',
+                    0.24
+                ],
+                [
+                    'v27',
+                    0.17
+                ],
+                [
+                    'v29',
+                    0.16
+                ]
+            ]
+        }]
+    }
+});
+	</script>
 
 </body>
 

@@ -1,37 +1,39 @@
+<style>
+div.top-left-part {
+	border-right:0;
+}
+
+nav.navbar .logo {
+	background-image: url("@routes.Assets.versioned("images/basf-logo.png")");
+    background-size: 140px;
+    background-position: 15px 6px;
+	height:60px;
+	background-repeat: no-repeat;
+	cursor: pointer;
+}
+
+</style>
 <nav class="navbar navbar-default navbar-static-top m-b-0">
-<div class="navbar-header">
-	<div class="top-left-part">
-		<!-- Logo -->
-		<a class="logo" href="index.html">
-			<!--
-	   <img src="../plugins/images/admin-logo.png" alt="home" class="dark-logo" />
-	   <img src="../plugins/images/admin-logo-dark.png" alt="home" class="light-logo" />
-	   </b>
-			-->
-			<span class="hidden-xs">
-			</span>
-		</a>
-	</div>
-	<!-- /Logo -->
-	<ul class="nav navbar-top-links navbar-right pull-right">
-		<li>
-			<form id="search" method="get" action="/colaboradores" role="search" class="app-search hidden-sm hidden-xs m-r-10">
-				<input name="searchterm" type="text" placeholder="Buscar colaboradores..." class="form-control"> 
-				<a href="#" onclick="document.forms.search.submit()">
-					<i class="fa fa-search">
-					</i>
-				</a> 
-			</form>
-		</li>
-		<li>
-			<a class="profile-pic" href="#"> 
-				<img src="@routes.Assets.versioned("images/profile-pic.jpg")" alt="user-img" width="36" class="img-circle">
-				<b class="hidden-xs">Libia</b>
-			</a>
-		</li>
-	</ul>
-</div>
-<!-- /.navbar-header -->
-<!-- /.navbar-top-links -->
-<!-- /.navbar-static-side -->
+	<div class="navbar-header">
+		<div class="top-left-part">
+			<div class="logo" onclick="window.location.href = '/'"></div>
+		</div>
+		<ul class="nav navbar-top-links navbar-right pull-right">
+			<li>
+				<form id="search" method="get" action="/colaboradores" role="search" class="app-search hidden-sm hidden-xs m-r-10">
+					<input name="searchterm" type="text" placeholder="Buscar colaboradores..." class="form-control"> 
+					<a href="#" onclick="document.forms.search.submit()">
+						<i class="fa fa-search">
+						</i>
+					</a> 
+				</form>
+			</li>
+			<li>
+				<a class="profile-pic" href="#"> 
+					<img src="@routes.Assets.versioned("images/profile-pic.jpg")" alt="user-img" width="36" class="img-circle">
+					<b class="hidden-xs">Libia</b>
+				</a>
+			</li>
+		</ul> <!-- /.navbar-top-links -->
+	</div> <!-- /.navbar-header -->
 </nav>

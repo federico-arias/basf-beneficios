@@ -1,25 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" type="image/png" sizes="16x16" href="@routes.Assets.versioned("assets/images/favicon.png")">
-    <title>BASF - Beneficios</title>
-    <!-- Bootstrap Core CSS -->
-    <link href="@routes.Assets.versioned("stylesheets/bootstrap.min.css")" rel="stylesheet">
-    <!-- Custom CSS -->
-    <link href="@routes.Assets.versioned("stylesheets/style.css")" rel="stylesheet">
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-<![endif]-->
-</head>
+@head("Listado de Beneficios")
 
 <body class="fix-header">
     <!-- ============================================================== -->
@@ -58,7 +40,7 @@
                         <h4 class="page-title">Lista de Beneficios</h4> </div>
                     <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
                         <ol class="breadcrumb">
-							<li><a href="#">Dashboards</a> / Beneficios</li>
+							<li><a href="/">Inicio</a> / Beneficios</li>
                         </ol>
                     </div>
                     <!-- /.col-lg-12 -->
@@ -73,10 +55,9 @@
                                 <table class="table">
                                     <thead>
                                         <tr>
-                                            <th>BENEFICIO</th>
-                                            <TH>OBSERVACIÓN</TH>
-                                            <TH>CATEGORÍA</TH>
-                                            <TH>SUBCATEGORÍA</TH>
+											<th> + </th>
+                                            <th>CATEGORÍA</th>
+                                            <th>BENEFICIOS</th>
                                         </tr>
                                     </thead>
 									<tbody id="beneficios">
@@ -108,8 +89,27 @@ function init() {
 	const dataPromise = getJson(url, opts);
 
 	dataPromise
-		.then(plotSolicitudes);
+		.then(plotSolicitudes)
+		.then( function() {
+			var trs = $('beneficios').children;
+			var l = trs.length;
+			for (var i= 0; i<l;i++) {
+				var td = document.createElement('td');
+				trs.item(i).insertBefore(td, trs.item(i).firstChild);
+			}
+		});
 }
+
+function toCard(cats) {
+
+}
+
+function toUl(bs) {
+	var ul = document.createElement('ul');
+	var li = document.createElement('li');
+}
+
+function $(id) {return document.getElementById(id);}
 
 function plotSolicitudes(data) {
 	var dfRows = data.map(row => plotRow(row))
@@ -117,16 +117,26 @@ function plotSolicitudes(data) {
 	document.getElementById("beneficios").append(dfRows);
 }
 
+//@@arg row: Object
 function plotRow(row) {
 	var tr = document.createElement('tr');
 	Object.keys(row).forEach( function(col) {
-		if (col == 'id') return;
 		var td = document.createElement('td');
-		var a = document.createElement('a');
 		tr.appendChild(td);
-		td.appendChild(a);
-		a.href= "/beneficio/" + row.id;
-		a.textContent = row[col];
+		if (Array.isArray(row[col])) {
+			var ul = document.createElement('ul');
+			row[col].forEach( function (b) {
+				var li = document.createElement('li');
+				var a = document.createElement('a');
+				a.href= "/beneficio/" + b.id;
+				a.textContent = b.beneficio;
+				li.appendChild(a);
+				ul.appendChild(li);
+			});
+			td.appendChild(ul);
+			return;
+		}
+		tr.textContent = row[col];
 	})
 	return tr;
 }
@@ -136,6 +146,8 @@ function getJson(url, opts) {
 	opts = opts || {};
 	return fetch(url, opts).then( res => res.json())
 }	
+
+
 </script>
 
 </body>

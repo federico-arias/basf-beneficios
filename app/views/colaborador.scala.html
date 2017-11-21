@@ -1,26 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" type="image/png" sizes="16x16" href="@routes.Assets.versioned("images/favicon.png")">
-    <title>BASF - Beneficios</title>
-    <!-- Bootstrap Core CSS -->
-    <link href="@routes.Assets.versioned("stylesheets/bootstrap.min.css")" rel="stylesheet">
-    <!-- Custom CSS -->
-    <link href="@routes.Assets.versioned("stylesheets/style.css")" rel="stylesheet">
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-<![endif]-->
-</head>
+@head("Edición de Beneficios Colaborador")
 
+<style>
+
+tr > td, 
+tr > th {
+	text-align:center;
+}
+
+tbody#solicitudes > tr > td:first-child, 
+thead > tr > th:first-child {
+	text-align:left;
+}
+
+</style>
 <body class="fix-header">
     <!-- ============================================================== -->
     <!-- Preloader -->
@@ -66,39 +61,44 @@
                 <!-- /.row -->
                 <!-- .row -->
                 <div class="row">
-                    <div class="col-md-4 col-xs-12">
-                        <div class="white-box">
-                            <div class="user-bg"> <img width="100%" alt="user" src="@routes.Assets.versioned("images/perfil-placeholder.jpg")">
-                                <div class="overlay-box">
-                                    <div class="user-content">
-                                        <a href="javascript:void(0)"><img src="@routes.Assets.versioned("images/perfil-placeholder.jpg")" class="thumb-lg img-circle" alt="img"></a>
-                                        <h4 class="text-white">
-											<i id="colaborador"></i>&nbsp;
-											<i id="apellido"></i>
+					<div class="col-md-4 col-xs-12">
+						<div class="white-box">
+							<div class="user-bg"> <img width="100%" alt="user" src="@routes.Assets.versioned("images/perfil-placeholder.jpg")">
+								<div class="overlay-box">
+									<div class="user-content">
+										<a href="javascript:void(0)"><img src="@routes.Assets.versioned("images/perfil-placeholder.jpg")" class="thumb-lg img-circle" alt="img"></a>
+										<h4 class="text-white">
+											<p id="colaborador"></p>
 										</h4>
-                                        <h4 id="ciudad" class="text-white">
-
-										</h4>
-                                        <h5 id="cargo" class="text-white">COO</h5> </div>
-                                </div>
-                            </div>
-                            <div class="user-btm-box">
-                                <div class="col-md-4 col-sm-4 text-center">
-                                    <p class="text-purple"><i class="ti-facebook"></i></p>
-                                    <h1 id="run"></h1> </div>
-                            </div>
-                        </div>
-                    </div>
+										
+										<p id="cargo" class="text-white"></p>
+								   	</div>
+								</div>
+							</div>
+							<div class="user-btm-box">
+									<h4>Identificador(RUN/DNI)</h4>
+									<p id="run"></p>
+									<h4>Nacionalidad</h4>
+									<p id="nacionalidad"></p>
+									<h4>Sucursal</h4>
+									<p id="sucursal"></p>
+									<h4>Dirección</h4>
+									<p id="direccion"></p>
+									<h4>Centro de costos</h4>
+									<p id="centro_costo"></p>
+							</div>
+						</div> <!-- /white-box -->
+					</div> <!-- /col -->
                     <div class="col-md-8 col-xs-12">
                         <div class="white-box">
                             <div class="table-responsive">
                                 <table class="table">
                                     <thead>
                                         <tr>
-                                            <th>FECHA SOLICITUD</th>
-											<th>FUE APROBADO</th>
-                                            <th>MONTO</th>
                                             <th>BENEFICIO</th>
+                                            <th>FECHA SOLICITUD</th>
+											<th>ESTADO</th>
+                                            <th>MONTO</th>
                                         </tr>
                                     </thead>
 									<tbody id="solicitudes">
@@ -137,10 +137,10 @@
 					<label class="col-sm-12">Beneficio</label>
 					<div class="col-sm-12">
 						<select id="beneficio_id" name="beneficio_id" class="form-control form-control-line">
-							<option value="1">Benef 1</option>
-							<option value="2">Benef 2</option>
-							<option value="3">Benef 3</option>
-							<option value="4">Benef 4</option>
+							<option value="20">Benef 1</option>
+							<option value="21">Benef 2</option>
+							<option value="22">Benef 3</option>
+							<option value="23">Benef 4</option>
 						</select>
 					</div>
 				</div>
@@ -153,13 +153,17 @@
 				<div class="form-group">
 					<label class="col-md-12">Fecha de solicitud</label>
 					<div class="col-md-12">
-						<input type="date" placeholder="" class="form-control form-control-line" name="solicitado" id="solicitado"></input>
+						<input type="date" placeholder="" class="form-control form-control-line" name="solicitado_en" id="solicitado_en"></input>
 					</div>
 				</div>
 				<div class="form-group">
 					<div class="col-md-12">
-						<label for="es_aprobado" class="col-md-12">¿Está aprobado?</label>
-						<input id="es_aprobado" type="checkbox" name="es_aprobado"></input>
+					<label for="estado" class="col-form-label">Estado</label>
+						<select id="estado" name="estado" class="form-control form-control-line">
+							<option value="1">Aprobado</option>
+							<option value="2">En trámite</option>
+							<option value="3">Rechazado</option>
+						</select>
 					</div>
 				</div>
 			</form>
@@ -172,94 +176,78 @@
 	</div> <!-- /Modal -->
 	<script type="text/javascript">
 
-document.addEventListener('DOMContentLoaded', init, false);
 
-function $(selector) {
-	return document.getElementById(selector);
-}
 
-function init() {
-	const jwt = document.cookie.split("=").reduce((acc, item) => acc == "jwt" ? item : null); 
-	var hs = new Headers();
-	hs.append("Authorization", "Bearer " + jwt);
-	const uid = window.location.href.split("/").pop();
-	const url = "/api/colaborador/" + uid;
-	const opts = {method: 'GET', headers: hs};
-	const dataPromise = getJson(url, opts);
+const jwt = document.cookie.split("=")
+	.reduce((acc, item) => acc == "jwt" ? item : null); 
+var hs = new Headers();
+hs.append("Authorization", "Bearer " + jwt);
+const uid = window.location.href.split("/").pop();
+const url = "/api/colaborador/" + uid;
+const opts = {method: 'GET', headers: hs};
+const dataPromise = getJson(url, opts);
 
-	$("btn-modal").addEventListener("click", function() {
-		$("myModal").style.display = "inherit";
-	});
+dataPromise
+	.then(filterObj(["colaborador", "run", "sucursal", "nacionalidad", "direccion", "cargo", "centro_costo"]))
+	.then(toTextNode)
+	.then(run);
 
-	$("close-modal").addEventListener("click", function() {
-		$("myModal").style.display = "none";
-	});
+dataPromise
+	.then(prop("json_agg"))
+	.then(map(filterObj(["beneficio", "solicitado_en", "estado", "monto"])))
+	.then(map(modifyField("monto", prepend("$") )))
+	.then(map(tr("solicitudes")))
+	.then(run);
 
-	$("btn-send").addEventListener("click", function() {
-		//add solicitud
-		var solicitud = ['beneficio_id', 'monto', 'es_aprobado', 'solicitado'];
-		//send FormData
-		var f = new FormData($("putBeneficio"));
-		f.append("colaborador_id", uid);
-		fetch("/api/solicitud", Object.assign({}, opts, {body:f}, {method:"PUT"}))
+$("btn-modal").addEventListener("click", function() {
+	$("myModal").style.display = "inherit";
+});
 
-		$("solicitudes").appendChild(plotRow(solicitud.map( s  => ({[s]:foo(s)})).reduce( (p,c) => Object.assign(p, c), {})));
+$("close-modal").addEventListener("click", function() {
+	$("myModal").style.display = "none";
+});
 
-		//close modal
-		$("myModal").style.display = "none";
+$("btn-send").addEventListener("click", sendForm);
 
-		function foo(inputId) {
-			return $(inputId).value
-		}
-	});
-
-	dataPromise
-		.then(plotToElem)
-		.then(plotSolicitudes);
-}
-
-function plotToElem(data) {
-	var keys = ['colaborador', 'apellido', 'ciudad', 'run'];
-	var obj = Object.keys(data)
-	  .filter(key => keys.includes(key))
-	  .reduce((obj, key) => {
-		obj[key] = data[key];
-		return obj;
-	  }, {});
-
-	for (const id in obj) {
-		$(id).textContent = data[id];
+function sendForm() {
+	var f = new FormData($("putBeneficio"));
+	f.append("colaborador_id", uid);
+	var urlEncoded = urlencodeFormData(f);
+	hs.append('Content-Type', 'application/x-www-form-urlencoded');
+	var opts = { 
+		method: "PUT",
+		body:urlEncoded,
+		headers: hs
 	}
-	return data;
+	var sent = fetch("/api/solicitud", opts)
+
+	sent.then( function(d) {$("myModal").style.display = "none"; return d})
+		.then( function(d) {
+			return Array.from(document.forms.putBeneficio.elements).map( function(el) {
+				var o = {};
+				if(el.nodeName === 'SELECT') {
+					o[el.id] = el.options.item(el.options.selectedIndex).label;
+					return o;
+				}
+				o[el.id] = el.value;
+				return	o;
+			}).reduce( function (a, el) {return Object.assign(a,el)}, {});
+		})
+		.then(tr("solicitudes"))
+		.then(function (f) {run([f])});
+
 }
 
-function filter(o) {
-	var keys = ['beneficio_id', 'monto', 'es_aprobado', 'solicitado'];
-	return Object.keys(o)
-	  .filter(key => keys.includes(key))
-	  .reduce((obj, key) => {
-		obj[key] = o[key];
-		return obj;
-	  }, {});
+function prepend(char) {
+	return function(str) {
+		return str == null ? 'N/A' : char + str;	
+	}
 }
 
-function plotSolicitudes(data) {
-	var dfRows = data.json_agg
-			.map(filter)
-			.map(obj => Object.assign({}, obj, {es_aprobado: obj.es_aprobado ? "Sí" : "No"}))
-			.map(row => plotRow(row))
-			.reduce( (p,n) => {p.append(n); return p}, document.createDocumentFragment());
-	$("solicitudes").append(dfRows);
-}
-
-function plotRow(row) {
-	var tr = document.createElement('tr');
-	Object.keys(row).forEach( function(col) {
-		var td = document.createElement('td');
-		tr.appendChild(td);
-		td.textContent = row[col];
-	})
-	return tr;
+function prop(p) {
+	return function(o) {
+		return o[p];
+	}
 }
 
 
@@ -267,6 +255,79 @@ function getJson(url, opts) {
 	opts = opts || {};
 	return fetch(url, opts).then( res => res.json())
 }	
+
+function filterObj(fields) {
+	return function(obj) {
+		if (!Array.isArray(fields)) 
+			throw new TypeError("filterObj() requiere un array", "lib.js");
+		var o = {};
+		fields.forEach(function(field) { 
+			o[field] = obj[field];
+		});
+		return o;
+	}
+}
+
+function map(func) {
+	return function(array) {
+		return array.map( function(value) { return func(value) })
+	}
+}
+
+function modifyField(field, func) {
+	return function(obj) {
+		obj[field] = func(obj[field]);
+		return obj;
+	};
+}
+
+function toTextNode(obj) {
+	return Object.keys(obj).map( function(field) {
+		var textNode = document.createTextNode(obj[field]);
+		textNode.fatherId = field; 
+		return textNode;
+	});
+}
+
+
+
+function tr(father) {
+	return function(rowObj) {
+		var tr = document.createElement("tr");
+		tr.fatherId = father;
+		return Object.keys(rowObj).map( function(col) {
+			var td = document.createElement('td');
+			td.textContent = rowObj[col];
+			return td;
+		}).reduce ( function( ac, e ) { 
+			ac.appendChild(e);
+			return ac
+		}, tr);
+	}
+}
+
+function run(domElemArray) {
+	domElemArray.map( function (domElem) {
+		$(domElem.fatherId).appendChild(domElem);
+	});
+}
+
+function $(id) {
+	return document.getElementById(id);
+}
+
+//https://stackoverflow.com/questions/7542586/new-formdata-application-x-www-form-urlencoded/38931547#38931547
+function urlencodeFormData(fd){
+    var s = '';
+    function encode(s){ return encodeURIComponent(s).replace(/%20/g,'+'); }
+    for(var pair of fd.entries()){
+        if(typeof pair[1]=='string'){
+            s += (s?'&':'') + encode(pair[0])+'='+encode(pair[1]);
+        }
+    }
+    return s;
+}
+
 	</script>
 </body>
 
