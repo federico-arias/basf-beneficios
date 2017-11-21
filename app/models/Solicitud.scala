@@ -49,7 +49,7 @@ class Solicitud @Inject()(dbapi: DBApi)(implicit ec: ExecutionContext) {
 					monedaId: Option[Int]) = {
 		insert(SQL(
 			"""
-			INSERT INTO solicitud(colaborador_id, beneficio_id, solicitado, resuelto, es_aprobado, monto, moneda_id)
+			INSERT INTO solicitud(colaborador_id, beneficio_id, solicitado_en, resuelto_en, esta_aprobado, monto, moneda_id)
 			VALUES ({colaboradorId}, {beneficioId}, {solicitado}, {resuelto}, {esAprobado}, {monto}, {monedaId})
 			"""
 		).on('colaboradorId -> colaboradorId,

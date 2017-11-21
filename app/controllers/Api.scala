@@ -42,11 +42,11 @@ class Api @Inject()(c: Colaborador, s: Solicitud, b: Beneficio, p: Presupuesto, 
 	}
 
 	def beneficio(id: String) = Action {
-		Ok(b.getOne(id))
+		Ok(b.select(id))
 	}
 
 	def beneficios = Action {
-		Ok(b.getAll())
+		Ok(b.selectAll())
 	}
 
 	def beneficioForm(id: String) = Action {
@@ -74,9 +74,9 @@ class Api @Inject()(c: Colaborador, s: Solicitud, b: Beneficio, p: Presupuesto, 
 	private val solicitudForm: Form[SolicitudData] = Form(mapping(
 		"colaborador_id" -> number,
 		"beneficio_id" -> number,
-		"solicitado" -> optional(date("yyyy-MM-dd")),
-		"resuelto" -> optional(date("yyyy-MM-dd")),
-		"es_aprobado" -> optional(boolean),
+		"solicitado_en" -> optional(date("yyyy-MM-dd")),
+		"resuelto_en" -> optional(date("yyyy-MM-dd")),
+		"esta_aprobado" -> optional(checked("on")),
 		"monto" -> optional(number),
 		"moneda_id" -> optional(number)
 		)(SolicitudData.apply)(SolicitudData.unapply))

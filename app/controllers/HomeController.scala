@@ -19,6 +19,10 @@ class HomeController extends Controller {
 	def index = Action { 
 		Ok(html.efectividad())
 	}
+	
+	def home = Action { 
+		Ok(html.home())
+	}
 
 	def efectividad = Action {
 		Ok(html.efectividad())

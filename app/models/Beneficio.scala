@@ -21,14 +21,31 @@ class Beneficio @Inject()(dbapi: DBApi)(implicit ec: ExecutionContext) {
 		JsonHelper.oneRowToJson(sql, "1", "1", db)
 	}
 
-	def getAll(): JsValue = {
-		var sql: String = "(select b.id, b.beneficio, b.observacion, sc.subcategoria, c.categoria from beneficio b left join subcategoria sc on b.subcategoria_id = sc.id left join categoria c on sc.categoria_id = c.id)"
+	def selectAll(): JsValue = {
+		var sql: String = """
+					(select c.categoria, json_agg(bs) as beneficios
+					from beneficio b
+					left join subcategoria sc
+					on b.subcategoria_id = sc.id
+					left join categoria c
+					on sc.categoria_id = c.id
+					left join (select b.id, b.beneficio from beneficio b) bs
+					on bs.id = b.id
+					group by c.categoria)
+					"""
 		JsonHelper.tableToJson(sql, db)
 	}
 
-	def getOne(beneficioId: String): JsValue = {
+	def select(beneficioId: String): JsValue = {
 		val select:String = raw"""
-			(select x.id as id, b1.beneficio as nombre, b1.observacion, x.json 
+			(select x.id as id, 
+				b1.beneficio, 
+				b1.observacion, 
+				x.presupuesto,
+				sc.subcategoria,
+				c.categoria,
+				b1.pais,
+				b1.es_medido_uso
 			from beneficio as b1 
 			left join (select b.id, json_agg(p.*) as presupuesto
 				from beneficio b
@@ -36,6 +53,10 @@ class Beneficio @Inject()(dbapi: DBApi)(implicit ec: ExecutionContext) {
 				on b.id = p.beneficio_id
 				group by b.id) x
 			on b1.id = x.id
+			left join subcategoria sc
+			on b1.subcategoria_id = sc.id
+			left join categoria c
+			on sc.categoria_id = c.id
 			where b1.id = ${beneficioId})
 		"""
 		JsonHelper.oneRowToJson(select, "1", "1", db)

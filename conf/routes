@@ -2,6 +2,7 @@
 # COLABORADOR + SOLICITUDES ; BENEFICIO + PRESUPUESTOS
 GET     /                           	controllers.HomeController.index
 GET 	/main							controllers.HomeController.main
+GET 	/home 							controllers.HomeController.home
 POST    /login 							controllers.HomeController.login
 # Dashboards
 GET     /efectividad 					controllers.HomeController.efectividad
