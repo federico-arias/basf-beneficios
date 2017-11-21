@@ -25,13 +25,13 @@ UPDATE solicitud
 -- cada colaborador solicita un subconjunto de los beneficios totales
 BEGIN TRANSACTION;
 
-INSERT INTO solicitud(colaborador_id, beneficio_id, solicitado, resuelto, es_aprobado, monto)
+INSERT INTO solicitud(colaborador_id, beneficio_id, solicitado_en, resuelto_en, esta_aprobado, monto)
 	SELECT colaborador_id, 
 	beneficio_id, 
 	solicitado,
 	solicitado + random() * (NOW()+'90 days' - NOW()) as resuelto,
 	random() > 0.4 as es_aprobado,
-	floor(random() * 10000)	
+	floor(random() * 10000)	as montirijillo
 	FROM (
 		SELECT c.id as colaborador_id,
 		b.id as beneficio_id,
@@ -39,17 +39,11 @@ INSERT INTO solicitud(colaborador_id, beneficio_id, solicitado, resuelto, es_apr
 		FROM beneficio b
 		CROSS JOIN colaborador c
 	) cal
-	WHERE random() < 0.3;
+	WHERE random() < 0.01;
 
 INSERT INTO beneficio(nombre, subcategoria_id, es_transversal)
 	VALUES ('Benef T1', 2, true);
 
 /* \copy */
-COPY colaborador(c1, c2, c3) 
-FROM '/home/federico/BASF/colaboradores.csv' 
-DELIMITER ',' 
-FORMAT CSV
-ENCODING 'LATIN1'
-HEADER true;
-
+\copy colaborador(sucursal, centro_costo, codigo_sap, run, colaborador, nacionalidad, nacimiento_en, direccion, comuna, ciudad, region, mail, telefono, ingreso_en, cargo, supervisor, esta_casado, es_hombre, es_indefinido, esta_sindicalizado) FROM '/home/federico/cols.csv' csv
 

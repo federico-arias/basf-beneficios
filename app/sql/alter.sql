@@ -6,9 +6,20 @@ ALTER TABLE beneficio
 	DROP COLUMN alcance;
 
 CREATE SEQUENCE encuesta_id_seq;
+
 ALTER TABLE encuesta
 	ALTER COLUMN id SET DEFAULT nextval('encuesta_id_seq');
 ALTER SEQUENCE encuesta_id_seq OWNED BY encuesta.id;
+
+CREATE SEQUENCE colaborador_id_seq
+	START WITH 1001
+	MINVALUE 1001
+	NO MAXVALUE
+	NO CYCLE
+	OWNED BY colaborador.id;
+
+alter table colaborador 
+	alter column id set default nextval('colaborador_id_seq');
 
 CREATE SEQUENCE beneficio_id_seq;
 ALTER TABLE beneficio
@@ -54,4 +65,46 @@ ALTER TABLE solicitud
 	ADD CONSTRAINT fk_moneda_id FOREIGN KEY (moneda_id)
 		REFERENCES moneda (id);
 	
+ALTER TABLE colaborador 
+	ADD COLUMN nacionalidad TEXT;
+
+ALTER TABLE colaborador 
+	ADD COLUMN esta_casado BOOLEAN;
+	
+ALTER TABLE colaborador 
+	ADD COLUMN direccion TEXT;
+
+ALTER TABLE colaborador 
+	ADD COLUMN comuna TEXT;
+
+ALTER TABLE colaborador 
+	ADD COLUMN region TEXT;
+
+ALTER TABLE colaborador 
+	ADD COLUMN telefono TEXT;
+
+ALTER TABLE colaborador
+	RENAME ingreso TO ingreso_en;
+
+ALTER TABLE colaborador
+	ADD COLUMN cargo TEXT;
+
+ALTER TABLE colaborador
+	ADD COLUMN empresa TEXT;
+
+ALTER TABLE colaborador
+	ADD COLUMN supervisor_id INTEGER;
+
+ALTER TABLE colaborador
+	ADD COLUMN centro_costo VARCHAR(9);
+
+ALTER TABLE colaborador
+	ADD CONSTRAINT fk_supervisor_id FOREIGN KEY (supervisor_id)
+		REFERENCES colaborador (id);
+
+ALTER TABLE colaborador
+	DROP COLUMN verificador;
+
+
+
 
