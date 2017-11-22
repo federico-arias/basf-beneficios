@@ -1,6 +1,6 @@
 import pandas as pd
 
-df = df.read_csv('colaboradores.csv')
+df = pd.read_csv('colaboradores.csv')
 
 #https://stackoverflow.com/questions/13148429/how-to-change-the-order-of-dataframe-columns
 def order(frame,var):  
