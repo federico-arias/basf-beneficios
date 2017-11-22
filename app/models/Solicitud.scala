@@ -27,14 +27,14 @@ class Solicitud @Inject()(dbapi: DBApi)(implicit ec: ExecutionContext) {
 			b.id AS beneficio_id,
 			b.beneficio AS beneficio,
 			COUNT(*) AS n_solicitudes,
-			SUM(s.es_aprobado::int)::float / COUNT(*)::float AS porcentaje_aprobacion,
+			SUM(s.esta_aprobado::int)::float / COUNT(*)::float AS porcentaje_aprobacion,
 			SUM(COUNT(*)) OVER (PARTITION BY c.area) AS beneficio_por_area
 			FROM solicitud AS s
 			LEFT JOIN colaborador AS c
 			ON s.colaborador_id = c.id
 			LEFT JOIN beneficio AS b
 			ON s.beneficio_id = b.id
-			WHERE s.solicitado  >= date_trunc('year', now())
+			WHERE s.solicitado_en  >= date_trunc('year', now())
 			GROUP BY c.area, b.id, b.beneficio
 			"""
 			).as(parserSolicitudesPorArea.*)

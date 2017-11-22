@@ -1,4 +1,5 @@
 logs
+*.csv
 target
 /.idea
 /.idea_modules

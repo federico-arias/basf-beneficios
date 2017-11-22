@@ -1,44 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" type="image/png" sizes="16x16" href="@routes.Assets.versioned("assets/images/favicon.png")">
-    <title>BASF - Beneficios</title>
-    <!-- Bootstrap Core CSS -->
-    <link href="@routes.Assets.versioned("stylesheets/bootstrap.min.css")" rel="stylesheet">
-    <!-- Custom CSS -->
-    <link href="@routes.Assets.versioned("stylesheets/style.css")" rel="stylesheet">
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-<![endif]-->
-<style>
-
-.highcharts-color-0 {
-  fill: #004893;
-}
-
-.highcharts-color-1 {
-  fill: #00743a;
-}
-
-.highcharts-color-2 {
-  fill: #f49700;
-}
-  
-.highcharts-color-3 {
-	fill: #bf0029;
-}
-
-</style>
-</head>
+@head("Panel de popularidad")
 
 <body class="fix-header">
     <!-- ============================================================== -->
@@ -112,7 +75,11 @@
                     <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12">
                         <div class="white-box">
 							<!--<h3 class="box-title">Beneficios v/s aprobación v/s uso</h3>-->
-
+								<select id="top-5-select" class="pull-right form-control" style="display: inline;width:auto;">
+									<option>Perú</option>
+									<option>Chile</option>
+									<option>BCW</option>
+								</select>
 							<div id="top-5-mujeres"></div>
                         </div>
                     </div>
@@ -122,6 +89,11 @@
                 <div class="row">
                     <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12">
                         <div class="white-box">
+							<select id="bubble-select" class="pull-right form-control" style="display: inline;width:auto;">
+								<option>Perú</option>
+								<option>Chile</option>
+								<option>BCW</option>
+							</select>
 							<!--<h3 class="box-title">Beneficios v/s aprobación v/s uso</h3>-->
 
 							<div id="solicitudes-por-categoria">
@@ -183,7 +155,7 @@ Highcharts.setOptions({
 	}
 });
 
-Highcharts.chart('top-5-mujeres', {
+var top5 = Highcharts.chart('top-5-mujeres', {
     chart: {
         type: 'bar'
     },

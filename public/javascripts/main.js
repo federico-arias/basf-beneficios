@@ -4,13 +4,13 @@ const jwt = document.cookie.split("=").reduce((acc, item) => acc == "jwt" ? item
 var hs = new Headers();
 hs.append("Authorization", "Bearer " + jwt)
 const opts = {method: 'GET', headers: hs}
-const dataPromise = getJson('/api/solicitudes/area', opts)
+/*const dataPromise = getJson('/api/solicitudes/area', opts)
 
 dataPromise
 	.then(plotTable);
 	//.then(plotBarChart)
 	//.then(plotPieChart)
-	
+	*/
 
 function filter(o) {
 	var keys = ['area', 'beneficio', 'nSolicitudes', 'porcentajeAprobacion', 'beneficioPorArea'];
@@ -52,7 +52,7 @@ function plotTable(data) {
 	return data;
 }
 
-Highcharts.chart('bubbleChart', {
+var bubble = Highcharts.chart('bubbleChart', {
     bubble: {
     	color:  '#FF0000'
     },
@@ -129,3 +129,32 @@ Highcharts.chart('bubbleChart', {
     }]
 
 });
+
+function $(id) {return document.getElementById(id);}
+
+var data = [
+	{ x: 95, y: 95, z: 13.5, name: 'BE', country: 'Categoría 1' },
+	{ x: 56.5, y: 102.9, z: 14.7, name: 'DE', country: 'Categoría 2' },
+	{ x: 50.5, y: 91.5, z: 15.5, name: 'FI', country: 'Categoría 3' },
+	{ x: 50.4, y: 102.5, z: 12, name: 'NL', country: 'Categoría 4' },
+	{ x: 50.3, y: 56.1, z: 11.5, name: 'SE', country: 'Categoría 5' },
+	{ x: 75.4, y: 70.1, z: 16.6, name: 'ES', country: 'Categoría 6' },
+	{ x: 74.2, y: 65.5, z: 14.5, name: 'FR', country: 'Categoría 7' },
+	{ x: 73.5, y: 53.1, z: 10, name: 'NO', country: 'Categoría 5' }
+];
+
+$("bubble-select").onchange = function(ev) {
+	//this == ev.target.options.item(ev.target.options.selectedIndex)	
+	//this.value && this.label
+	d = data.map( function(row) {
+		return {
+			name: row.name,
+			country: row.country,
+			x: row.x * Math.random() * 1.5, 
+			y: row.y * Math.random() * 1.5, 
+			z: row.z * Math.random() * 1.5 
+		}
+	});
+	bubble.series[0].update({data:d})
+};
+

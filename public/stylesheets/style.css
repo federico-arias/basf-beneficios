@@ -18,6 +18,18 @@
   top: calc(50% - 3.5px);
   left: calc(50% - 3.5px);
 }
+.highcharts-color-0 {
+  fill: #004893;
+}
+.highcharts-color-1 {
+  fill: #00743a;
+}
+.highcharts-color-2 {
+  fill: #f49700;
+}
+.highcharts-color-3 {
+  fill: #bf0029;
+}
 * {
   outline: none !important;
 }

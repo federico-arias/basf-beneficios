@@ -1,25 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" type="image/png" sizes="16x16" href="@routes.Assets.versioned("assets/images/favicon.png")">
-    <title>BASF - Beneficios</title>
-    <!-- Bootstrap Core CSS -->
-    <link href="@routes.Assets.versioned("stylesheets/bootstrap.min.css")" rel="stylesheet">
-    <!-- Custom CSS -->
-    <link href="@routes.Assets.versioned("stylesheets/style.css")" rel="stylesheet">
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-<![endif]-->
-</head>
+@head("Tiempo de respuesta")
 
 <body class="fix-header">
     <!-- ============================================================== -->
@@ -39,43 +21,12 @@
         <!-- ============================================================== -->
         <!-- Topbar header - style you can find in pages.scss -->
         <!-- ============================================================== -->
-        <nav class="navbar navbar-default navbar-static-top m-b-0">
-            <div class="navbar-header">
-                <div class="top-left-part">
-                    <!-- Logo -->
-                    <a class="logo" href="index.html">
-						<!--
-						<img src="../plugins/images/admin-logo.png" alt="home" class="dark-logo" />
-						<img src="../plugins/images/admin-logo-dark.png" alt="home" class="light-logo" />
-                     </b>
-						-->
-                        <span class="hidden-xs">
-                     </span>
-					</a>
-                </div>
-                <!-- /Logo -->
-                <ul class="nav navbar-top-links navbar-right pull-right">
-                    <li>
-                        <form role="search" class="app-search hidden-sm hidden-xs m-r-10">
-                            <input type="text" placeholder="Buscar colaboradores..." class="form-control"> <a href=""><i class="fa fa-search"></i></a> </form>
-                    </li>
-                    <li>
-                        <a class="profile-pic" href="#"> 
-							<img src="@routes.Assets.versioned("images/profile-pic.jpg")" alt="user-img" width="36" class="img-circle">
-							<b class="hidden-xs">Libia</b>
-						</a>
-                    </li>
-                </ul>
-            </div>
-            <!-- /.navbar-header -->
-            <!-- /.navbar-top-links -->
-            <!-- /.navbar-static-side -->
-        </nav>
+		@navbar()
         <!-- End Top Navigation -->
         <!-- ============================================================== -->
         <!-- Left Sidebar - style you can find in sidebar.scss  -->
         <!-- ============================================================== -->
-		@sidebar("efectividad")
+		@sidebar("respuesta")
         <!-- ============================================================== -->
         <!-- End Left Sidebar -->
         <!-- ============================================================== -->
@@ -86,10 +37,10 @@
             <div class="container-fluid">
                 <div class="row bg-title">
                     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-                        <h4 class="page-title">Efectividad</h4> </div>
+                        <h4 class="page-title">Tiempo de respuesta</h4> </div>
                     <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
                         <ol class="breadcrumb">
-							<li><a href="#">Dashboards</a> / Efectividad</li>
+							<li><a href="#">Inicio</a> / Tiempo de respuesta</li>
                         </ol>
                     </div>
                     <!-- /.col-lg-12 -->
@@ -102,18 +53,24 @@
                 <div class="row">
                     <div class="col-lg-4 col-sm-6 col-xs-12">
                         <div class="white-box analytics-info">
-                            <h3 class="box-title">Costo promedio YTD</h3>
+                            <h3 class="box-title">Panel tiempo de respuesta</h3>
+							<p>Los siguientes gráficos identifican las mayores demoras en la resolución de solicitudes y el porcentaje de ellas que son aprobadas.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-sm-6 col-xs-12">
+                        <div class="white-box analytics-info">
+                            <h3 class="box-title">Demora promedio de resolución</h3>
                             <ul class="list-inline two-part">
                                 <li>
                                     <div id="sparklinedash"></div>
                                 </li>
-                                <li class="text-right"><i class="ti-arrow-up text-success"></i> <span class="counter text-success">$200.000</span></li>
+                                <li class="text-right"><i class="ti-arrow-up text-success"></i> <span class="counter text-success">3.2 días</span></li>
                             </ul>
                         </div>
                     </div>
                     <div class="col-lg-4 col-sm-6 col-xs-12">
                         <div class="white-box analytics-info">
-                            <h3 class="box-title">Aceptación promedio YTD</h3>
+                            <h3 class="box-title">Porcentaje de solicitudes aprobadas</h3>
                             <ul class="list-inline two-part">
                                 <li>
                                     <div id="sparklinedash2"></div>
@@ -122,26 +79,25 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="col-lg-4 col-sm-6 col-xs-12">
-                        <div class="white-box analytics-info">
-                            <h3 class="box-title">Costo total YTD</h3>
-                            <ul class="list-inline two-part">
-                                <li>
-                                    <div id="sparklinedash3"></div>
-                                </li>
-                                <li class="text-right"><i class="ti-arrow-up text-info"></i> <span class="counter text-info">$254M</span></li>
-                            </ul>
-                        </div>
-                    </div>
                 </div>
                 <!--/.row -->
                 <!--row -->
                 <div class="row">
-                    <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12">
+                    <div class="col-md-6 col-lg-6 col-sm-12 col-xs-12">
                         <div class="white-box">
-                            <h3 class="box-title">Beneficios v/s aprobación v/s uso</h3>
+							<select id="top5-select" class="pull-right row form-control" style="display: inline;width:auto;">
+								<option>Perú</option>
+								<option>Chile</option>
+								<option>BCW</option>
+							</select>
+							<div id="top-5-respuesta"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-sm-12 col-xs-12">
+                        <div class="white-box">
+                            <h3 class="box-title">Aprobación por área</h3>
+							<div id="aprobacion-por-area"></div>
 
-<div id="bubbleChart" style="height: 400px; min-width: 310px; max-width: 900px; margin: 0 auto"></div>
                         </div>
                     </div>
                 </div>
@@ -152,35 +108,9 @@
                 <div class="row">
                     <div class="col-md-12 col-lg-12 col-sm-12">
                         <div class="white-box">
-                            <div class="col-md-3 col-sm-4 col-xs-6 pull-right">
-                                <select class="form-control pull-right row b-none">
-                                    <option>2017</option>
-                                    <option>2016</option>
-                                    <option>2015</option>
-                                </select>
-                            </div>
-                            <h3 class="box-title">Uso de beneficios por Área</h3>
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>ÁREA</th>
-                                            <th>BENEFICIO</th>
-                                            <th>SOLICITUDES</th>
-											<th>APROBACIÓN (%)</th>
-                                            <th>TOTAL POR ÁREA</th>
-                                        </tr>
-                                    </thead>
-									<tbody id="tablita">
-                                    </tbody>
-                                </table>
-                            </div>
                         </div>
                     </div>
                 </div>
-                <!-- ============================================================== -->
-                <!-- chat-listing & recent comments -->
-                <!-- ============================================================== -->
             </div>
             <!-- /.container-fluid -->
             <footer class="footer text-center"> 2017 &copy; Recursos Humanos, BASF</footer>
@@ -191,7 +121,84 @@
     </div>
 	<script src="https://code.highcharts.com/highcharts.js"></script>
 	<script src="https://code.highcharts.com/highcharts-more.js"></script>
-	<script src="@routes.Assets.versioned("javascripts/main.js")" type="text/javascript"></script>
+	<script type="text/javascript">
+
+var top5 = Highcharts.chart('top-5-respuesta', {
+    chart: {
+        type: 'column'
+    },
+    title: {
+        text: 'Tiempo de respuesta a solicitudes'
+    },
+    subtitle: {
+        text: 'Beneficios con solicitudes con mayor demora de respuesta'
+    },
+    xAxis: {
+        type: 'category',
+        labels: {
+            rotation: -45,
+            style: {
+                fontSize: '13px',
+                fontFamily: 'Verdana, sans-serif'
+            }
+        }
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: 'Tiempo de respuesta (días)'
+        }
+    },
+    legend: {
+        enabled: false
+    },
+    tooltip: {
+        pointFormat: 'Respuesta de <b>{point.y:.1f} días</b>'
+    },
+	credits: false,
+    series: [{
+        name: 'Tiempo de respuesta',
+        data: [
+            ['Lactancia', 23.7],
+            ['Bono escolaridad', 16.1],
+            ['Bono educación superior', 14.2],
+            ['Canasta navidad', 14.0],
+            ['Bono atención dental', 12.5],
+        ],
+        dataLabels: {
+            enabled: true,
+            rotation: -90,
+            color: '#FFFFFF',
+            align: 'right',
+            format: '{point.y:.1f}', // one decimal
+            y: 10, // 10 pixels down from the top
+            style: {
+                fontSize: '13px',
+                fontFamily: 'Verdana, sans-serif'
+            }
+        }
+    }]
+});
+
+function $(id) {return document.getElementById(id);}
+
+$("top5-select").onchange = function(ev) {
+	var d = [
+				['Lactancia', 53.7],
+				['Bono escolaridad', 16.1],
+				['Bono educación superior', 14.2],
+				['Canasta navidad', 14.0],
+				['Bono atención dental', 12.5]
+			];
+
+	var d2 = d.map( function (bar) {
+		return [bar[0], bar[1] * Math.random() * 1.2];
+	});
+
+	top5.series[0].update({data: d2});
+}
+
+	</script>
 
 </body>
 

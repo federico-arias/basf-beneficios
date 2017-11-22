@@ -20,8 +20,6 @@ UPDATE solicitud
 	SET moneda_id = (random() > 0.5)::int + 1
 	RETURNING moneda_id;
 
-
-
 -- cada colaborador solicita un subconjunto de los beneficios totales
 BEGIN TRANSACTION;
 
@@ -46,4 +44,8 @@ INSERT INTO beneficio(nombre, subcategoria_id, es_transversal)
 
 /* \copy */
 \copy colaborador(sucursal, centro_costo, codigo_sap, run, colaborador, nacionalidad, nacimiento_en, direccion, comuna, ciudad, region, mail, telefono, ingreso_en, cargo, supervisor, esta_casado, es_hombre, es_indefinido, esta_sindicalizado) FROM '/home/federico/cols.csv' csv
+
+--with lookup table
+UPDATE carga SET colaborador_id=c.id FROM colaborador c
+    WHERE carga.rut_colaborador = c.rut;
 
