@@ -25,15 +25,15 @@ class Api @Inject()(c: Colaborador, s: Solicitud, b: Beneficio, p: Presupuesto, 
 
 	implicit private val solicitudWritesJs = Json.writes[SolicitudPorArea]
 
-	def colaborador(id: String) = Action {
+	def colaborador(id: String) = AuthAction {
 		Ok(c.getOne(id))
 	}
 
-	def colaboradores() = Action {
+	def colaboradores() = AuthAction {
 		Ok(c.getAll)
 	}
 
-	def search(term: String) = Action {
+	def search(term: String) = AuthAction {
 		Ok(c.selectAllLike(term))
 	}
 
