@@ -102,38 +102,35 @@
                     </div>
                 </div>
                 <!-- /.row -->
-                <!-- ============================================================== -->
-                <!-- table -->
-                <!-- ============================================================== -->
                 <div class="row">
-                    <div class="col-md-12 col-lg-12 col-sm-12">
+                    <div class="col-md-6 col-lg-6 col-sm-12 col-xs-12">
                         <div class="white-box">
-                            <div class="col-md-3 col-sm-4 col-xs-6 pull-right">
-                                <select class="form-control pull-right row b-none">
-                                    <option>2017</option>
-                                    <option>2016</option>
-                                    <option>2015</option>
-                                </select>
-                            </div>
-                            <h3 class="box-title">Uso de beneficios por Área</h3>
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>ÁREA</th>
-                                            <th>BENEFICIO</th>
-                                            <th>SOLICITUDES</th>
-											<th>APROBACIÓN (%)</th>
-                                            <th>TOTAL POR ÁREA</th>
-                                        </tr>
-                                    </thead>
-									<tbody id="tablita">
-                                    </tbody>
-                                </table>
-                            </div>
+							<!--<h3 class="box-title">Beneficios v/s aprobación v/s uso</h3>-->
+								<select id="top-5h-select" class="pull-right form-control" style="display: inline;width:auto;">
+									<option>Perú</option>
+									<option>Chile</option>
+									<option>BCW</option>
+								</select>
+							<div id="top-5-hombres"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-sm-12 col-xs-12">
+                        <div class="white-box">
+							<!--<h3 class="box-title">Beneficios v/s aprobación v/s uso</h3>-->
+								<select id="por-edad-select" class="pull-right form-control" style="display: inline;width:auto;">
+									<option>Perú</option>
+									<option>Chile</option>
+									<option>BCW</option>
+								</select>
+							<div id="por-edad"></div>
                         </div>
                     </div>
                 </div>
+                <!-- /.row -->
+                <!-- ============================================================== -->
+                <!-- table -->
+                <!-- ============================================================== -->
+
                 <!-- ============================================================== -->
                 <!-- chat-listing & recent comments -->
                 <!-- ============================================================== -->
@@ -154,6 +151,126 @@ Highcharts.setOptions({
 		drillUpText: 'Volver a {series.name}'
 	}
 });
+
+var porEdad =  Highcharts.chart('por-edad', {
+    chart: {
+        type: 'bar'
+    },
+    title: {
+        text: 'Solicitudes por rango etario'
+    },
+    subtitle: {
+        text: 'N de solicitudes por rango etario'
+    },
+    xAxis: {
+        categories: ['20-30', '30-40', '40-50', '50-60', '60-70'],
+        title: {
+            text: null
+        }
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: 'Número de solicitudes',
+            align: 'high'
+        },
+        labels: {
+            overflow: 'justify'
+        }
+    },
+    plotOptions: {
+        bar: {
+            dataLabels: {
+                enabled: true
+            }
+        }
+    },
+    legend: {
+        layout: 'vertical',
+        align: 'right',
+        verticalAlign: 'top',
+        x: -40,
+        y: 80,
+        floating: true,
+        borderWidth: 1,
+        backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+        shadow: true
+    },
+    credits: {
+        enabled: false
+    },
+    series: [{
+        name: 'Año 2015',
+        data: [107, 31, 635, 203, 2]
+    }, {
+        name: 'Año 2016',
+        data: [133, 156, 947, 408, 6]
+    }, {
+        name: 'Año 2017',
+        data: [1052, 954, 800, 740, 38]
+    }]
+});
+
+
+var top5hombres =  Highcharts.chart('top-5-hombres', {
+    chart: {
+        type: 'bar'
+    },
+    title: {
+        text: 'Top 5 solicitudes de hombres últimos 3 años'
+    },
+    subtitle: {
+        text: '5 beneficios más solicitados por hombres'
+    },
+    xAxis: {
+        categories: ['Benef 1', 'Benef 2', 'Benef 3', 'Benef 4', 'Benef 5'],
+        title: {
+            text: null
+        }
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: 'Número de solicitudes',
+            align: 'high'
+        },
+        labels: {
+            overflow: 'justify'
+        }
+    },
+    plotOptions: {
+        bar: {
+            dataLabels: {
+                enabled: true
+            }
+        }
+    },
+    legend: {
+        layout: 'vertical',
+        align: 'right',
+        verticalAlign: 'top',
+        x: -40,
+        y: 80,
+        floating: true,
+        borderWidth: 1,
+        backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+        shadow: true
+    },
+    credits: {
+        enabled: false
+    },
+    series: [{
+        name: 'Año 2015',
+        data: [107, 31, 635, 203, 2]
+    }, {
+        name: 'Año 2016',
+        data: [133, 156, 947, 408, 6]
+    }, {
+        name: 'Año 2017',
+        data: [1052, 954, 800, 740, 38]
+    }]
+});
+
 
 var top5 = Highcharts.chart('top-5-mujeres', {
     chart: {

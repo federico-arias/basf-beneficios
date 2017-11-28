@@ -1,3 +1,4 @@
+@import "colors.less";
 // --Sidebar
 .sidebar {
     overflow-y: auto;
@@ -80,8 +81,31 @@
     color: @sidebar-text;
     width: 240px;
     &:focus {
-        background: rgba(0, 0, 0, 0);
+        background: @basf-naranja !important;
+		color: white !important;
     }
+    &:hover {
+    }
+}
+
+#side-menu li:nth-child(1) a:hover {
+        background: @basf-verde !important;
+		color: white !important;
+}
+
+#side-menu li:nth-child(2) a:hover {
+        background: @basf-azul !important;
+		color: white !important;
+}
+
+#side-menu li:nth-child(3) a:hover {
+        background: @basf-rojo !important;
+		color: white !important;
+}
+
+#side-menu li:nth-child(4) a:hover {
+        background: @basf-naranja !important;
+		color: white !important;
 }
 
 #side-menu li.devider {

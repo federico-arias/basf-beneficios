@@ -15,11 +15,11 @@ class Presupuesto @Inject()(dbapi: DBApi)(implicit ec: ExecutionContext) {
 
 	private val db = dbapi.database("default")
 
-	def create(monto: Int,
+	def insert(monto: Int,
 					   asignacion: Date,
 					   beneficioId: Int,
 					   monedaId: Int): Option[Long] = {
-		insert(SQL(
+		execute(SQL(
 			raw"""
 			INSERT INTO presupuesto(monto, asignacion, moneda_id, beneficio_id) 
 			VALUES (${monto}, '${asignacion}', ${monedaId}, ${beneficioId})
@@ -27,7 +27,7 @@ class Presupuesto @Inject()(dbapi: DBApi)(implicit ec: ExecutionContext) {
 			))
 	}
 
-	def insert(query: SqlQuery): Option[Long] = {
+	def execute(query: SqlQuery): Option[Long] = {
 		db.withConnection{ implicit conn => 
 			query.executeInsert()
 		}

@@ -18,7 +18,7 @@ GET     /beneficio/:id					controllers.HomeController.beneficio(id)
 GET		/api/colaboradores 				controllers.Api.colaboradores
 GET 	/api/colaborador/search			controllers.Api.search(searchterm)
 GET		/api/colaborador/:id			controllers.Api.colaborador(id)
-GET 	/api/beneficios					controllers.Api.beneficios
+GET 	/api/beneficios					controllers.Api.beneficios(individuales: Boolean ?= false)
 GET 	/api/beneficio/:id				controllers.Api.beneficio(id)
 GET 	/api/beneficio/:id/form			controllers.Api.beneficioForm(id)
 PUT		/api/presupuesto				controllers.Api.putPresupuesto

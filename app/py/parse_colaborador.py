@@ -26,3 +26,4 @@ df = df.drop(['estado_civil', 'genero', 'contrato', 'sindicalizado', 'edad'], 1)
 
 df.to_csv('/home/federico/cols.csv', index = False, header = False)
 
+#pd.DataFrame( {"categoria": bs["Categoría"].unique()}).to_csv('categoria_gen.csv', index = False, header = False)

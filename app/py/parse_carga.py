@@ -5,4 +5,7 @@ carga_df = pd.read_csv("/home/federico/carga.csv")
 nonna = carga_df[pd.notnull(carga_df["Nombre Hijo"])]
 nonna.to_csv('/home/federico/cols.csv', index = False, header = False)
 
+# get only these rows
+cs = cs[["Rut Trabajador", "Nombre Conyuge", "Rut Conyuge"]]
+
 

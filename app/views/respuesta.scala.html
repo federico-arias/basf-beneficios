@@ -123,6 +123,62 @@
 	<script src="https://code.highcharts.com/highcharts-more.js"></script>
 	<script type="text/javascript">
 
+var top5 = Highcharts.chart('aprobacion-por-area', {
+    chart: {
+        type: 'column'
+    },
+    title: {
+        text: 'Porcentaje de aprobación de solicitudes'
+    },
+    subtitle: {
+        text: 'Áreas con menor porcentaje de aprobación'
+    },
+    xAxis: {
+        type: 'category',
+        labels: {
+            rotation: -45,
+            style: {
+                fontSize: '13px',
+                fontFamily: 'Verdana, sans-serif'
+            }
+        }
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: 'Porcentaje de aprobación(%)'
+        }
+    },
+    legend: {
+        enabled: false
+    },
+    tooltip: {
+        pointFormat: 'Aprobación de <b>{point.y:.1f} </b>'
+    },
+	credits: false,
+    series: [{
+        name: 'Menor aprobación por área',
+        data: [
+            ['RRHH', 23.7],
+            ['TI', 16.1],
+            ['Logística', 14.2],
+            ['Otras', 14.0],
+        ],
+        dataLabels: {
+            enabled: true,
+            rotation: -90,
+            color: '#FFFFFF',
+            align: 'right',
+            format: '{point.y:.1f}', // one decimal
+            y: 10, // 10 pixels down from the top
+            style: {
+                fontSize: '13px',
+                fontFamily: 'Verdana, sans-serif'
+            }
+        }
+    }]
+});
+
 var top5 = Highcharts.chart('top-5-respuesta', {
     chart: {
         type: 'column'

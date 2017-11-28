@@ -16,8 +16,25 @@ class Beneficio @Inject()(dbapi: DBApi)(implicit ec: ExecutionContext) {
 
 	private val db = dbapi.database("default")
 
-	def beneficioForm(id: String): JsValue = {
-		val sql: String = s"(select b.es_financiero, b.es_transversal from beneficio where b.id = $id)"
+	def whereCategory(id: String) = ??? 
+
+	def where(col: String, cond: String) = {
+		val sql: String = raw"""
+							(
+							SELECT id, 
+								beneficio,
+								es_aprobado,
+								es_costeable
+							FROM beneficio
+							WHERE ${col} is ${cond}
+							and es_individual = true
+							)
+							"""
+		JsonHelper.tableToJson(sql, db)
+	}
+
+	def selectForm(id: String): JsValue = {
+		val sql: String = s"(select b.es_financiero, b.es_transversal, b.es_medido_tiempo_respuesta, b.es_exclusivo_indefinidos, es_medido_uso from beneficio b where b.id = $id)"
 		JsonHelper.oneRowToJson(sql, "1", "1", db)
 	}
 
@@ -31,6 +48,7 @@ class Beneficio @Inject()(dbapi: DBApi)(implicit ec: ExecutionContext) {
 					on sc.categoria_id = c.id
 					left join (select b.id, b.beneficio from beneficio b) bs
 					on bs.id = b.id
+					where b.es_individual = false
 					group by c.categoria)
 					"""
 		JsonHelper.tableToJson(sql, db)

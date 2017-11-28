@@ -14,7 +14,7 @@ class Colaborador @Inject()(dbapi: DBApi)(implicit ec: ExecutionContext) {
 
 	def getOne(id: String): JsValue = {
 		val tabla: String = raw"""
-		(select c.*, sq.*
+		(select c.*, sq.*, gg.*
 		from colaborador as c
 		left join (select c.id as uuid, json_agg(s.*)
 			from colaborador c
@@ -24,6 +24,11 @@ class Colaborador @Inject()(dbapi: DBApi)(implicit ec: ExecutionContext) {
 			on c.id = s.colaborador_id
 			group by c.id) sq
 		on c.id = sq.uuid
+		right join (select g.colaborador_id, 
+						json_agg(g) as cargas
+					from (select carga, colaborador_id, rut, nacido_en from carga) g
+					group by g.colaborador_id) gg
+		on c.id = gg.colaborador_id
 		where c.id = ${id})	
 		"""
 		JsonHelper.oneRowToJson(tabla, "1", "1", db)

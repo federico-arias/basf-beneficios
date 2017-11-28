@@ -45,27 +45,36 @@ class Api @Inject()(c: Colaborador, s: Solicitud, b: Beneficio, p: Presupuesto, 
 		Ok(b.select(id))
 	}
 
-	def beneficios = Action {
-		Ok(b.selectAll())
+	def beneficios(individuales: Boolean) = Action {
+		if (individuales) {
+			Ok(b.where("es_individual", "True"))
+		}
+		else {
+			Ok(b.selectAll())
+		}
+	}
+
+	def beneficiosIndividuales = Action {
+		Ok(b.where("es_individual", "TRUE"))
 	}
 
 	def beneficioForm(id: String) = Action {
-		Ok(b.beneficioForm(id))
+		Ok(b.selectForm(id))
 	}
 
-	case class PresupuestoData(monto: Int, asignacion: java.util.Date, beneficioId: Int, monedaId: Int)
+	case class PresupuestoData(monto: Int, asignadoEn: java.util.Date, beneficioId: Int, monedaId: Int)
 
 	val presupuestoForm: Form[PresupuestoData] = Form(mapping(
 		"monto" -> number,
-		"asignacion" -> date("yyyy-MM-dd"),
-		"moneda_id" -> number,
+		"solicitado_en" -> date("yyyy-MM-dd"),
+		"moneda-id" -> number,
 		"beneficio_id" -> number
 	  )(PresupuestoData.apply)(PresupuestoData.unapply)
 	)
 
 	def putPresupuesto = Action(parse.form(presupuestoForm)) { implicit r =>
 		val b = r.body
-		p.create(b.monto, b.asignacion, b.monedaId, b.beneficioId)
+		p.insert(b.monto, b.asignadoEn, b.monedaId, b.beneficioId)
 			.map( l => Ok(s"Inserted row with id ${l}"))
 			.getOrElse(BadRequest("You fool"))
 	}

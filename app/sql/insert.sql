@@ -37,7 +37,7 @@ INSERT INTO solicitud(colaborador_id, beneficio_id, solicitado_en, resuelto_en, 
 		FROM beneficio b
 		CROSS JOIN colaborador c
 	) cal
-	WHERE random() < 0.01;
+	WHERE random() < 0.04;
 
 INSERT INTO beneficio(nombre, subcategoria_id, es_transversal)
 	VALUES ('Benef T1', 2, true);
@@ -46,6 +46,6 @@ INSERT INTO beneficio(nombre, subcategoria_id, es_transversal)
 \copy colaborador(sucursal, centro_costo, codigo_sap, run, colaborador, nacionalidad, nacimiento_en, direccion, comuna, ciudad, region, mail, telefono, ingreso_en, cargo, supervisor, esta_casado, es_hombre, es_indefinido, esta_sindicalizado) FROM '/home/federico/cols.csv' csv
 
 --with lookup table
-UPDATE carga SET colaborador_id=c.id FROM colaborador c
-    WHERE carga.rut_colaborador = c.rut;
+UPDATE carga g SET colaborador_id=c.id FROM colaborador c
+    WHERE g.rut_colaborador = c.rut;
 
