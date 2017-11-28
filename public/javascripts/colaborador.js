@@ -62,6 +62,7 @@ const dataPromise = getJson(url, opts);
 
 dataPromise
 	.then(filterObj(["colaborador", "telefono", "mail", "nacimiento_en", "run", "sucursal", "nacionalidad", "direccion", "cargo", "centro_costo", "supervisor_id"]))
+	.then(modifyField('supervisor_id', link))
 	.then(toTextNode)
 	.then(run);
 
@@ -80,13 +81,14 @@ dataPromise
 	.then(map(tr("solicitudes")))
 	.then(run);
 
-	function $$(el) {return document.createElement(el);}
-	function link(value) {
-		var a = $$('a');	
-		a.textContent='Ver supervisor';
-		a.href = value;
-		return a;
-	}
+function $$(el) {return document.createElement(el);}
+
+function link(value) {
+	var a = $$('a');	
+	a.textContent='Ver supervisor';
+	a.href = value;
+	return a;
+}
 
 dataPromise
 	.then(prop("cargas"))
@@ -326,8 +328,8 @@ function c(ev) {
 		 .then(keepTrue)
 		 .then(rename('es_costeable', 'monto'))
 		 .then(rename('es_aprobado', 'resuelto_en'))
-		 .then(modifyField('monto', containerize('Monto', 'number')))
-		 .then(modifyField('resuelto_en', containerize('Fecha resolución', 'date')))
+		 .then(modify('monto', containerize('Monto', 'number')))
+		 .then(modify('resuelto_en', containerize('Fecha resolución', 'date')))
 		 .then(clearDom)
 		 .then(runO);
 }
