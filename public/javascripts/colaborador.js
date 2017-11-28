@@ -2,6 +2,7 @@ function Dom() {};
 
 Dom.div = function(children, className) {
 	var div = $$('div');
+	div.fatherId = 'beneficio-form';
 	div.className = className || 'form-group';
 	children.forEach( function(child) {
 		div.appendChild(child);
@@ -12,7 +13,8 @@ Dom.div = function(children, className) {
 Dom.number = function (id) {
 	var el = $$('input');
 	el.type = 'number';
-	el.fatherId = id;
+	el.name = id;
+	el.id = id;
 	el.className = "form-control form-control-line"
 	return el;
 }
@@ -20,7 +22,8 @@ Dom.number = function (id) {
 Dom.date = function (id) {
 	var el = $$('input');
 	el.type = 'date';
-	el.fatherId = id;
+	el.name = id;
+	el.id = id;
 	el.className = "form-control form-control-line"
 	return el;
 }
@@ -28,14 +31,15 @@ Dom.date = function (id) {
 Dom.label = function(text) {
 	var el = $$('label');
 	el.textContent = text;
+	el.className = 'col-sm-12';
 	return el;
 }
 
-Dom.select = function () {
+Dom.select = function (id) {
 	return function(arr) {
 		var el = $$('select');
-		el.fatherId = "beneficio-select";
-		el.name = "beneficio_id";
+		el.name = id;
+		el.fatherId = 'beneficio-select';
 		el.className = "form-control form-control-line";
 		arr.forEach( function( o ) {	
 			var opt = $$('option');
@@ -100,6 +104,14 @@ $("close-modal").addEventListener("click", function() {
 
 $("btn-send").addEventListener("click", sendForm);
 
+function runO(o) {
+	for (var k in o) {
+		if (o.hasOwnProperty(k)) {
+			$(o[k].fatherId).appendChild(o[k]);	
+		}
+	}
+}
+
 function put(url, hs, fData) {
 	hs.append('Content-Type', 'application/x-www-form-urlencoded');
 	var opts = { 
@@ -120,7 +132,7 @@ function get(url, hs) {
 
 dataI = get("/api/beneficios?individuales=true");
 
-dataI.then(Dom.select()).then(run);	
+dataI.then(Dom.select("beneficio_id")).then(run);	
 
 function filter(id) {
 	return function (ar) {
@@ -215,6 +227,13 @@ function modifyField(field, func) {
 	};
 }
 
+function modify(field, func) {
+	return function(obj) {
+		obj[field] = func(field, obj[field]);
+		return obj;
+	};
+}
+
 function toTextNode(obj) {
 	return Object.keys(obj).map( function(field) {
 		if (!obj[field]) {
@@ -284,6 +303,21 @@ function delPropOrElse(field, el) {
 
 
 $('beneficio-select').addEventListener('change', c);
+$('resuelto_en').addEventListener('change', d);
+
+function d() {
+	/*
+	 *  <div class="switch-field">
+      <div class="switch-title">Is this awesome?</div>
+      <input type="radio" id="switch_left" name="switch_2" value="yes" checked/>
+      <label for="switch_left">Yes</label>
+      <input type="radio" id="switch_right" name="switch_2" value="no" />
+      <label for="switch_right">No</label>
+    </div>
+	 *
+	 */
+}
+
 
 function c(ev) {
 	var id = parseInt(ev.target.options.item(ev.target.options.selectedIndex).value);
@@ -294,7 +328,18 @@ function c(ev) {
 		 .then(rename('es_aprobado', 'resuelto_en'))
 		 .then(modifyField('monto', containerize('Monto', 'number')))
 		 .then(modifyField('resuelto_en', containerize('Fecha resolución', 'date')))
-		 .then(run);
+		 .then(clearDom)
+		 .then(runO);
+}
+
+function clearDom(obj) {
+	var p = $('beneficio-form');
+	var ch = p.children;
+	var i = 1; var l= ch.length;
+	for (;i<l;i++) {
+		p.removeChild(ch.item(i))
+	}
+	return obj;
 }
 
 function keepTrue(o) {
@@ -308,7 +353,6 @@ function keepTrue(o) {
 function containerize(labelText, type) {
 	return function(id) {
 		var div = Dom.div([Dom.label(labelText), Dom.div([Dom[type](id)], "col-md-12")]);
-		div.fatherId = 'beneficio-form-group';
 		return div;
 	}
 }
