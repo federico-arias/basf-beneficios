@@ -1,5 +1,6 @@
 001. Agregar [toggle][1] a formulario de ingreso de beneficios
 004. Actualizar información de áreas y normalizar tabla.
+015. Redireccionar automáticamente al home al detectar JWT.
 020. Renombrar 'popularidad' por 'recurrencia'.
 030. Notificar cuando se esté desconectado (ausencia de JWT).
 040. Agregar un menú 'cerrar sesión' en el perfil. 

@@ -1,5 +1,5 @@
 //get cookie from store
-const jwt = document.cookie.split("=").reduce((acc, item) => acc == "jwt" ? item : null); 
+const jwt = document.cookie.split("=").reduce(function(acc, item) {return acc == "jwt" ? item : null}); 
 //send jwt to endpoint 
 var hs = new Headers();
 hs.append("Authorization", "Bearer " + jwt)
@@ -90,7 +90,7 @@ var bubble = Highcharts.chart('bubbleChart', {
             text: 'Efectividad (Costo per cápita)'
         },
         labels: {
-            format: '{value} MM'
+            format: '{value} M'
         },
         maxPadding: 0.2,
     },
@@ -100,7 +100,7 @@ var bubble = Highcharts.chart('bubbleChart', {
         headerFormat: '<table>',
         pointFormat: '<tr><th colspan="2"><h3>{point.country}</h3></th></tr>' +
             '<tr><th>Popularidad:</th><td>{point.x}</td></tr>' +
-            '<tr><th>Costo:</th><td>{point.y} MM</td></tr>' +
+            '<tr><th>Costo:</th><td>{point.y} M</td></tr>' +
             '<tr><th>Aprobación:</th><td>{point.z}%</td></tr>',
         footerFormat: '</table>',
         followPointer: true
