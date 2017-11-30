@@ -51,6 +51,13 @@ Dom.select = function (id) {
 	}
 }
 
+function duplicate(f1,f2) {
+	return function(o) {
+		o[f2] = o[f1];
+		return o;
+	}
+}
+
 const jwt = document.cookie.split("=")
 	.reduce((acc, item) => acc == "jwt" ? item : null); 
 var hs = new Headers();
@@ -92,9 +99,29 @@ function link(value) {
 
 dataPromise
 	.then(prop("cargas"))
-	.then(map(filterObj(["carga", "nacido_en"])))
+	.then(map(filterObj(["carga", "nacido_en", "es_hijo"])))
+	.then(map(duplicate("nacido_en", "edad")))
+	.then(map(modifyField("edad", dateDiff(Date.now()))))
+	.then(map(modifyField("es_hijo", ifTrueThen('Hijo', 'Cónyuge'))))
 	.then(map(tr("cargas")))
 	.then(run);
+
+function ifTrueThen(text, otherwise) {
+	return function(bool) {
+		return bool ? text : otherwise;
+	}
+}
+
+function dateDiff(d2) {
+	return function(d1) {
+		var d = new Date();
+		d.setYear(d1.split("-")[0]);
+		d.setMonth(d1.split("-")[1], d1.split("-")[2]);
+		var diff= d2 - d.getTime();
+		var ageDate = new Date(diff); // miliseconds from epoch
+		return Math.abs(ageDate.getUTCFullYear() - 1970);
+	}
+}
 
 $("btn-modal").addEventListener("click", function() {
 	$("beneficio-modal").style.display = "inherit";

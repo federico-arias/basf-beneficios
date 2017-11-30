@@ -26,7 +26,7 @@ class Colaborador @Inject()(dbapi: DBApi)(implicit ec: ExecutionContext) {
 		on c.id = sq.uuid
 		right join (select g.colaborador_id, 
 						json_agg(g) as cargas
-					from (select carga, colaborador_id, rut, nacido_en from carga) g
+					from (select carga, es_hijo, colaborador_id, rut, nacido_en from carga) g
 					group by g.colaborador_id) gg
 		on c.id = gg.colaborador_id
 		where c.id = ${id})	
