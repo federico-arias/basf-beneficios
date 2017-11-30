@@ -1,7 +1,6 @@
 # This file defines all application routes (Higher priority routes first)
 # COLABORADOR + SOLICITUDES ; BENEFICIO + PRESUPUESTOS
-GET     /                           	controllers.HomeController.index
-GET 	/main							controllers.HomeController.main
+GET     /                           	controllers.HomeController.auth
 GET 	/home 							controllers.HomeController.home
 POST    /login 							controllers.HomeController.login
 # Dashboards

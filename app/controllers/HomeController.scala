@@ -16,10 +16,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 @Singleton
 class HomeController extends Controller {
 
-	def index = Action { 
-		Ok(html.efectividad())
-	}
-	
 	def home = Action { 
 		Ok(html.home())
 	}
@@ -52,8 +48,11 @@ class HomeController extends Controller {
 		Ok(html.beneficio())
 	}
 
-	def main = Action {
-		Ok(html.auth("Ingreso"))
+	def auth = Action { req: Request[AnyContent] =>
+		req.cookies.get("jwt") match {
+			case Some(_) => Ok(html.home())
+			case None => Ok(html.auth("Ingreso"))
+		}
 	}
 
 	def login = Action { req:  Request[AnyContent] => 
