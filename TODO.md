@@ -1,7 +1,7 @@
 001. Agregar [toggle][1] a formulario de ingreso de beneficios
-004. Actualizar información de áreas y normalizar tabla.
+004. ~~Actualizar información de áreas y normalizar tabla.~~
 015. Redireccionar automáticamente al home al detectar JWT.
-020. Renombrar 'popularidad' por 'recurrencia'.
+020. ~~Renombrar 'popularidad' por 'recurrencia'.~~
 030. Notificar cuando se esté desconectado (ausencia de JWT).
 040. Agregar un menú 'cerrar sesión' en el perfil. 
 002. UPDATE para formulario de ingreso de presupuestos.
@@ -12,9 +12,9 @@
 060. Procesar client-side el JSON de recurrencia.
 060. Procesar client-side el JSON de efectividad.
 060. Procesar client-side el JSON de tiempo respuesta.
-070. Agregar Homepage al sidebar.scala.html
-080. Agregar columna 'Edad' y 'Relación' (de parentesco) a colaborador.scala.
-005. Modificar colores en los gráficos de popularidad.
+070. ~~Agregar Homepage al sidebar.scala.html~~
+080. ~~Agregar columna 'Edad' y 'Relación' (de parentesco) a colaborador.scala.~~
+005. ~~Modificar colores en los gráficos de popularidad.~~
 006. Adaptar para Explorer 11
 007. Validación de formularios client-side para ingreso de solicitudes.
 008. Validación de formularios client-side para ingreso de presupuesto.

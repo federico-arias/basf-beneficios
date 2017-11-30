@@ -4,13 +4,13 @@ const jwt = document.cookie.split("=").reduce(function(acc, item) {return acc ==
 var hs = new Headers();
 hs.append("Authorization", "Bearer " + jwt)
 const opts = {method: 'GET', headers: hs}
-/*const dataPromise = getJson('/api/solicitudes/area', opts)
+const dataPromise = getJson('/api/solicitudes/area', opts)
 
 dataPromise
 	.then(plotTable);
-	//.then(plotBarChart)
-	//.then(plotPieChart)
-	*/
+
+//.then(plotBarChart)
+//.then(plotPieChart)
 
 function filter(o) {
 	var keys = ['area', 'beneficio', 'nSolicitudes', 'porcentajeAprobacion', 'beneficioPorArea'];
@@ -70,13 +70,13 @@ var bubble = Highcharts.chart('bubbleChart', {
     },
 
     title: {
-        text: 'Popularidad v/s Efectividad v/s Aprobación'
+        text: 'Recurrencia v/s Costo v/s Aprobación'
     },
 
     xAxis: {
         gridLineWidth: 1,
         title: {
-            text: 'Popularidad (número de solicitudes)'
+            text: 'Recurrencia (número de solicitudes)'
         },
         labels: {
             format: '{value}'
