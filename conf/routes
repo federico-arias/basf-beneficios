@@ -27,4 +27,5 @@ PUT		/api/solicitud					controllers.Api.putSolicitud
 GET 	/api/solicitudes/area			controllers.Api.solicitudesPorArea
 
 # Map static resources from the /public folder to the /assets URL path
+GET     /robots.txt             	controllers.Assets.at(path="/public", file="robots.txt")
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
