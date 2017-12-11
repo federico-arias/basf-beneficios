@@ -34,6 +34,11 @@ function parseForm(sFormId) {
 	for (var nItem = 0; nItem < oTarget.elements.length; nItem++) {
 		oField = oTarget.elements[nItem];
 		if (!oField.hasAttribute("name")) { continue; }
+		if (oField.nodeName === 'SELECT') {
+			var idx = oField.options.selectedIndex;
+			segments.push(escape(oField.name) + "=" + escape(String(oField.options.item(idx).value)));
+			continue;
+		}
 		segments.push(escape(oField.name) + "=" + escape(String(oField.value)));
 	}
 	return segments;

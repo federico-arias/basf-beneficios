@@ -1,4 +1,5 @@
 export function coalesce(elseVal, nullable) {}
+export function log(e) {console.error(e);}
 export function parseQueryString(url) {
   var urlParams = {};
   url.replace(

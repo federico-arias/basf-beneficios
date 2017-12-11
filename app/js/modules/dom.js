@@ -63,6 +63,13 @@ export function runAll(fatherId) {
 	}
 }
 
+export function runWithKeys(obj) {
+	Object.keys(obj).forEach( function (k) {
+		$(k).appendChild(obj[k]);
+	});
+}
+
+
 export function run(els) {
 	if (Array.isArray(els))
 		return els.map( function (el) {
