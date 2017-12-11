@@ -1,0 +1,25 @@
+{
+  "name": "basf-beneficios",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "for file in *.js; do; browserify ${file} -t babelify --outfile ../../public/javascripts/${file}; done;"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babelify": "^8.0.0",
+    "browserify": "^14.5.0"
+  },
+  "dependencies": {
+    "fetch-headers": "git+https://github.com/jimmywarting/fetch-headers.git",
+    "js-cookie": "^2.2.0",
+    "promise-polyfill": "^6.1.0",
+    "whatwg-fetch": "^2.0.3"
+  }
+}
