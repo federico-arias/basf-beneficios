@@ -1,61 +1,21 @@
-import "babel-polyfill";
-import "whatwg-fetch"; 
+import {get} from './modules/fetch.js';
+import * as Cookie from 'js-cookie';
+import {pick} from './modules/utils.js';
+import {runAll, href, elem, elems, reduce} from './modules/dom.js';
+import * as r from 'ramda-lens';
+import {prop, assoc} from './modules/lens.js';
 
-const Headers = require('fetch-headers/headers-es5.min.js');
+const opts = {};
+const data = get('/api/solicitudes/area', opts);
+const keys = ['area', 'beneficio', 'nSolicitudes', 'porcentajeAprobacion', 'beneficioPorArea'];
+const td = elem('td');
 
-//get cookie from store
-const jwt = document.cookie.split("=").reduce(function(acc, item) {return acc == "jwt" ? item : null}); 
-//send jwt to endpoint 
-var hs = new Headers();
-hs.append("Authorization", "Bearer " + jwt)
-const opts = {method: 'GET', headers: hs}
-const dataPromise = getJson('/api/solicitudes/area', opts)
-
-dataPromise
-	.then(plotTable);
-
-//.then(plotBarChart)
-//.then(plotPieChart)
-
-function filter(o) {
-	var keys = ['area', 'beneficio', 'nSolicitudes', 'porcentajeAprobacion', 'beneficioPorArea'];
-	return Object.keys(o)
-	  .filter(key => keys.includes(key))
-	  .reduce((obj, key) => {
-		obj[key] = o[key];
-		return obj;
-	  }, {});
-}
-
-function getJson(url, opts) {
-	opts = opts || {};
-	return fetch(url, opts).then( res => res.json())
-}	
-
-function plotTable(data) {
-	let fragment = document.createDocumentFragment();
-	console.log(data);
-	data.map(filter)
-		.map( o => Object.assign({}, o, {porcentajeAprobacion: Math.floor(o.porcentajeAprobacion * 100)}))
-		.forEach( row => {
-			var tr = document.createElement('tr');
-			Object.keys(row).forEach( function(col) {
-				var td = document.createElement('td');
-				tr.appendChild(td);
-				if (col == 'approved') {
-					td.textContent = Math.floor(row[col] * 100);
-					return;
-				}
-				if (row[col] > 0.7) 
-					td.className = 'text-success';
-				td.textContent = row[col];
-			});
-			fragment.appendChild(tr);
-		})
-	document.getElementById('tablita')
-		.appendChild(fragment);
-	return data;
-}
+data
+	.then(map(pick(keys)))
+	.then(map(bulkModify(keys, td)))
+	.then(map(reduce(keys, tr)))
+	.then(runAll('tablita'))
+	.catch(log);
 
 var bubble = Highcharts.chart('bubbleChart', {
     bubble: {
@@ -134,8 +94,6 @@ var bubble = Highcharts.chart('bubbleChart', {
     }]
 
 });
-
-function $(id) {return document.getElementById(id);}
 
 var data = [
 	{ x: 95, y: 95, z: 13.5, name: 'BE', country: 'Categoría 1' },

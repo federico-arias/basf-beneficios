@@ -1,5 +1,54 @@
-export function coalesce(elseVal, nullable) {}
+export function duplicate(f1,f2) {
+	return function(o) {
+		o[f2] = o[f1];
+		return o;
+	}
+}
+
+export function where(key, value) {
+	return function(arr) {
+		return arr.filter( function(o) {
+			return o[key] === value;
+		});
+	}
+}
+
+export function rename(fieldFrom, fieldTo) {
+	return function(o) {
+		if (o.hasOwnProperty(fieldFrom)) {
+			o[fieldTo] = o[fieldFrom];
+			delete o[fieldFrom];
+		}
+		return o
+	}
+}
+
+export function ifTrueElse(text, otherwise) {
+	return function(bool) {
+		return bool ? text : otherwise;
+	}
+}
+
+export function dateDiff(d2) {
+	return function(d1) {
+		var d = new Date();
+		d.setYear(d1.split("-")[0]);
+		d.setMonth(d1.split("-")[1], d1.split("-")[2]);
+		var diff= d2 - d.getTime();
+		var ageDate = new Date(diff); // miliseconds from epoch
+		return Math.abs(ageDate.getUTCFullYear() - 1970);
+	}
+}
+
 export function log(e) {console.error(e);}
+
+export function tap (func) {
+	return function (obj) {
+		func(obj);
+		return obj;
+	}
+}
+
 export function parseQueryString(url) {
   var urlParams = {};
   url.replace(
@@ -20,7 +69,17 @@ export function map(func) {
 
 export function modify(field, func) {
 	return function(obj) {
-		obj[field] = func(obj[field]);
+		if (obj.hasOwnProperty(field))
+			obj[field] = func(obj[field]);
+		return obj;
+	};
+}
+
+export function bulkModify(fields, func) {
+	return function(obj) {
+		fields.forEach( function (field) {
+			obj = modify(field, func)(obj);
+		});
 		return obj;
 	};
 }

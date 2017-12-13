@@ -14,19 +14,84 @@ var _dom = require('./modules/dom.js');
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function init() {
-	var jwt = Cookie.get('jwt');
 	var url = "/api/colaborador/search?searchterm=" + (0, _utils.parseQueryString)(location.search).searchterm;
-	var opts = { headers: [{ k: 'Authorization', v: 'Bearer ' + jwt }] };
-	var data = (0, _fetch.get)(url, opts);
+	var data = (0, _fetch.get)(url);
 
-	data.then((0, _utils.map)((0, _utils.pick)(['id', 'colaborador', 'run']))).then((0, _utils.map)((0, _utils.modify)('id', (0, _utils.prepend)('/api/colaborador/')))).then((0, _utils.map)((0, _utils.merge)(['id', 'colaborador'], _dom.href))).then((0, _utils.map)((0, _dom.tr)('colaboradores'))).then(_dom.run).catch(function (e) {
+	data.then((0, _utils.map)((0, _utils.pick)(['id', 'colaborador', 'run']))).then((0, _utils.map)((0, _utils.modify)('id', (0, _utils.prepend)('/colaborador/')))).then((0, _utils.map)((0, _utils.merge)(['id', 'colaborador'], _dom.href))).then((0, _utils.map)((0, _dom.tr)('colaboradores'))).then(_dom.run).catch(function (e) {
 		return console.error(e);
 	});
 }
 
 document.addEventListener('DOMContentLoaded', init, false);
 
-},{"./modules/dom.js":2,"./modules/fetch.js":3,"./modules/utils.js":5,"js-cookie":6}],2:[function(require,module,exports){
+},{"./modules/dom.js":3,"./modules/fetch.js":4,"./modules/utils.js":6,"js-cookie":7}],2:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.Form = Form;
+function Form(form) {
+	//searches elements by traversing the <form> tag picking only input forms
+	var self = this;
+	this.objs = [];
+	this.elems = _traverse(form, _filter(['SELECT', 'INPUT']));
+	this.elems.forEach(function (el) {
+		var name = el.name;
+		var value = el.value;
+		var label = el.label === undefined ? el.value : el.label;
+		if (el.nodeName.toUpperCase() == 'SELECT') {
+			value = el.options.item(el.options.selectedIndex).value;
+			label = el.options.item(el.options.selectedIndex).label;
+		}
+		self.objs.push({
+			name: name,
+			value: value,
+			label: label
+		});
+	});
+}
+
+function _filter(allowed) {
+	return function (el, acc) {
+		if (!el.checked && el.type === 'radio') return acc;
+		if (allowed.indexOf(el.nodeName.toUpperCase()) !== -1) {
+			return acc.concat(el);
+		}
+		return acc;
+	};
+}
+
+function _traverse(root, func) {
+	function iter(elem, acc) {
+		acc = func(elem, acc);
+		if (elem.children.length) acc = iter(elem.firstElementChild, acc);
+		var next = elem.nextElementSibling;
+		if (next) return iter(elem.nextElementSibling, acc);
+		return acc;
+	}
+
+	return iter(root.firstElementChild, []);
+}
+
+Form.prototype.labels = function () {
+	return this.objs.reduce(function (acc, obj) {
+		acc[obj.name] = obj.label;
+		return acc;
+	}, {});
+};
+
+Form.prototype.urlEncoded = function () {
+	return this.objs.map(function (obj) {
+		return escape(obj.name) + '=' + escape(obj.value);
+	}).join('&');
+};
+
+Form.prototype.append = function (key, value, label) {
+	this.objs.push({ name: key, value: value, label: label });
+};
+
+},{}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -35,11 +100,124 @@ Object.defineProperty(exports, "__esModule", {
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
+exports.hide = hide;
+exports.sibling = sibling;
+exports.reduce = reduce;
+exports.clear = clear;
+exports.elem = elem;
+exports.classed = classed;
+exports.valued = valued;
+exports.typed = typed;
+exports.named = named;
+exports.elems = elems;
 exports.tr = tr;
+exports.runAll = runAll;
+exports.runWithKeys = runWithKeys;
 exports.run = run;
 exports.href = href;
 
 var _utils = require('./modules/utils.js');
+
+function hide(el) {
+	return function (_) {
+		el.style.display = "none";
+		return _;
+	};
+}
+
+function sibling(elemName) {
+	return function (el) {
+		var el2 = elem(elemName)('');
+		var frag = document.createElementFragment();
+		frag.apppendChild(el);
+		frag.apppendChild(el2);
+		return frag;
+	};
+}
+
+function reduce(fields, func) {
+	return function (obj) {
+		return func(fields.reduce(function (acc, field) {
+			acc.appendChild(obj[field]);
+			return acc;
+		}, document.createDocumentFragment()));
+	};
+}
+
+function clear(className) {
+	return function (_) {
+		var els = document.getElementsByClassName(className);
+		var l = els.length;
+		for (var i = 0; i < l; i++) {
+			els.item(0).parentElement.removeChild(els.item(0));
+		}
+	};
+}
+
+function elem(elType) {
+	return function (child) {
+		var el = (0, _utils.$$)(elType);
+		if ((typeof child === 'undefined' ? 'undefined' : _typeof(child)) !== 'object' || typeof child == 'undefined' || child === null) child = document.createTextNode(child);
+		el.appendChild(child);
+		return el;
+	};
+}
+
+function classed(elem) {
+	return function (className) {
+		return function (child) {
+			var el = elem(child);
+			el.className = className;
+			return el;
+		};
+	};
+}
+
+function valued(func) {
+	return function (value) {
+		return function (child) {
+			var el = func(child);
+			el.value = value;
+			return el;
+		};
+	};
+}
+
+function typed(func) {
+	// func :: String || DomNode -> DomNode
+	return function (typeName) {
+		return function (child) {
+			var el = func(child);
+			el.type = typeName;
+			return el;
+		};
+	};
+}
+
+function named(func) {
+	// func :: String || DomNode -> DomNode
+	return function (name) {
+		return function (child) {
+			var el = func(child);
+			el.id = name;
+			el.name = name;
+			return el;
+		};
+	};
+}
+
+// nest arrays of object[field]
+function elems(elType, field) {
+	return function (children) {
+		var el = (0, _utils.$$)(elType);
+		children.forEach(function (child) {
+			child = child[field];
+			if ((typeof child === 'undefined' ? 'undefined' : _typeof(child)) !== 'object' || typeof child == 'undefined') child = document.createTextNode(child);
+			el.appendChild(child);
+		});
+		return el;
+	};
+}
 
 function tr(father) {
 	return function (rowObj) {
@@ -57,6 +235,22 @@ function tr(father) {
 	};
 }
 
+function runAll(fatherId) {
+	return function (els) {
+		if (Array.isArray(els)) return els.map(function (el) {
+			(0, _utils.$)(fatherId).appendChild(el);
+			return el;
+		});
+		return (0, _utils.$)(fatherId).appendChild(els);
+	};
+}
+
+function runWithKeys(obj) {
+	Object.keys(obj).forEach(function (k) {
+		(0, _utils.$)(k).appendChild(obj[k]);
+	});
+}
+
 function run(els) {
 	if (Array.isArray(els)) return els.map(function (el) {
 		(0, _utils.$)(el.fatherId).appendChild(el);
@@ -72,17 +266,25 @@ function href(src, text) {
 	return a;
 }
 
-},{"./modules/utils.js":4}],3:[function(require,module,exports){
+},{"./modules/utils.js":5}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
-exports.post = exports.get = undefined;
+exports.put = exports.post = exports.get = undefined;
 
 var _promisePolyfill = require('promise-polyfill');
 
 var _promisePolyfill2 = _interopRequireDefault(_promisePolyfill);
+
+var _Form = require('./Form.js');
+
+var _jsCookie = require('js-cookie');
+
+var Cookie = _interopRequireWildcard(_jsCookie);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -93,17 +295,22 @@ if (!window.Promise) {
 
 function fetch(method) {
 	return function (url, opts) {
+		opts = opts || {};
 		var p = new _promisePolyfill2.default(function (resolve, reject) {
 			var xhr = new XMLHttpRequest();
 			xhr.open(method, url);
-			opts.headers.forEach(function (h) {
+			opts.headers ? opts.headers.forEach(function (h) {
 				xhr.setRequestHeader(h.k, h.v);
-			});
+			}) : null;
 			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-			xhr.send();
+			xhr.setRequestHeader('Authorization', 'Bearer ' + Cookie.get('jwt'));
+			var send = opts.form ? opts.form.urlEncoded() : null;
+			xhr.send(send);
+
 			xhr.onreadystatechange = function () {
 				if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-					resolve(JSON.parse(xhr.responseText));
+					if (send === null) return resolve(JSON.parse(xhr.responseText));
+					resolve(opts.form.labels());
 				}
 			};
 		});
@@ -113,8 +320,9 @@ function fetch(method) {
 
 var get = exports.get = fetch('GET');
 var post = exports.post = fetch('POST');
+var put = exports.put = fetch('PUT');
 
-},{"promise-polyfill":7}],4:[function(require,module,exports){
+},{"./Form.js":2,"js-cookie":7,"promise-polyfill":8}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -130,18 +338,79 @@ function $$(name) {
 	return document.createElement(name);
 }
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
+exports.duplicate = duplicate;
+exports.where = where;
+exports.rename = rename;
+exports.ifTrueElse = ifTrueElse;
+exports.dateDiff = dateDiff;
+exports.log = log;
+exports.tap = tap;
 exports.parseQueryString = parseQueryString;
 exports.map = map;
 exports.modify = modify;
+exports.bulkModify = bulkModify;
 exports.prepend = prepend;
 exports.merge = merge;
 exports.pick = pick;
+function duplicate(f1, f2) {
+	return function (o) {
+		o[f2] = o[f1];
+		return o;
+	};
+}
+
+function where(key, value) {
+	return function (arr) {
+		return arr.filter(function (o) {
+			return o[key] === value;
+		});
+	};
+}
+
+function rename(fieldFrom, fieldTo) {
+	return function (o) {
+		if (o.hasOwnProperty(fieldFrom)) {
+			o[fieldTo] = o[fieldFrom];
+			delete o[fieldFrom];
+		}
+		return o;
+	};
+}
+
+function ifTrueElse(text, otherwise) {
+	return function (bool) {
+		return bool ? text : otherwise;
+	};
+}
+
+function dateDiff(d2) {
+	return function (d1) {
+		var d = new Date();
+		d.setYear(d1.split("-")[0]);
+		d.setMonth(d1.split("-")[1], d1.split("-")[2]);
+		var diff = d2 - d.getTime();
+		var ageDate = new Date(diff); // miliseconds from epoch
+		return Math.abs(ageDate.getUTCFullYear() - 1970);
+	};
+}
+
+function log(e) {
+	console.error(e);
+}
+
+function tap(func) {
+	return function (obj) {
+		func(obj);
+		return obj;
+	};
+}
+
 function parseQueryString(url) {
 	var urlParams = {};
 	url.replace(new RegExp("([^?=&]+)(=([^&]*))?", "g"), function ($0, $1, $2, $3) {
@@ -161,7 +430,16 @@ function map(func) {
 
 function modify(field, func) {
 	return function (obj) {
-		obj[field] = func(obj[field]);
+		if (obj.hasOwnProperty(field)) obj[field] = func(obj[field]);
+		return obj;
+	};
+}
+
+function bulkModify(fields, func) {
+	return function (obj) {
+		fields.forEach(function (field) {
+			obj = modify(field, func)(obj);
+		});
 		return obj;
 	};
 }
@@ -197,7 +475,7 @@ function pick(fields) {
 	};
 }
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 /*!
  * JavaScript Cookie v2.2.0
  * https://github.com/js-cookie/js-cookie
@@ -364,7 +642,7 @@ function pick(fields) {
 	return init(function () {});
 }));
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 (function (root) {
 
   // Store setTimeout reference so promise-polyfill will be unaffected by

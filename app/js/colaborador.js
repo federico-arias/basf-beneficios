@@ -1,415 +1,201 @@
-import "babel-polyfill";
-import "whatwg-fetch"; 
+import {$} from './modules/modules/utils.js';
+import {get, put} from './modules/fetch.js';
+import {log, ifTrueElse, where, dateDiff, duplicate, pick, rename, bulkModify, map, merge, modify, prepend} from './modules/utils.js';
+import {tap} from './modules/utils.js';
+import {attr, named, valued, typed, classed, hide} from './modules/dom.js';
+import {runAll, href, elem, clear, runWithKeys, reduce} from './modules/dom.js';
+import {Form} from './modules/Form.js';
+import * as r from 'ramda-lens';
+import {prop} from './modules/lens.js';
 
-const Headers = require('fetch-headers/headers-es5.min.js');
-
-function Dom() {};
-
-Dom.div = function(children, className) {
-	var div = $$('div');
-	div.fatherId = 'beneficio-form';
-	div.className = className || 'form-group';
-	children.forEach( function(child) {
-		div.appendChild(child);
-	});
-	return div;
-}
-
-Dom.number = function (id) {
-	var el = $$('input');
-	el.type = 'number';
-	el.name = id;
-	el.id = id;
-	el.className = "form-control form-control-line"
-	return el;
-}
-
-Dom.date = function (id) {
-	var el = $$('input');
-	el.type = 'date';
-	el.name = id;
-	el.id = id;
-	el.className = "form-control form-control-line"
-	return el;
-}
-
-Dom.label = function(text) {
-	var el = $$('label');
-	el.textContent = text;
-	el.className = 'col-sm-12';
-	return el;
-}
-
-Dom.select = function (id) {
-	return function(arr) {
-		var el = $$('select');
-		el.name = id;
-		el.fatherId = 'beneficio-select';
-		el.className = "form-control form-control-line";
-		arr.forEach( function( o ) {	
-			var opt = $$('option');
-			opt.value = o.id;
-			opt.textContent = o.beneficio;
-			el.appendChild(opt);
-		});
-		return el;
-	}
-}
-
-function duplicate(f1,f2) {
-	return function(o) {
-		o[f2] = o[f1];
-		return o;
-	}
-}
-
-const jwt = document.cookie.split("=")
-	.reduce((acc, item) => acc == "jwt" ? item : null); 
-var hs = new Headers();
-hs.append("Authorization", "Bearer " + jwt);
 const uid = window.location.href.split("/").pop();
-const url = "/api/colaborador/" + uid;
-const opts = {method: 'GET', headers: hs};
-const dataPromise = getJson(url, opts);
+const data = get('/api/colaborador/' + uid);
+const allowed = ["colaborador", "telefono", "mail", "nacimiento_en", "run", "sucursal", "nacionalidad", "direccion", "cargo", "centro_costo", "supervisor_id"];
+const p = elem('p');
 
-dataPromise
-	.then(filterObj(["colaborador", "telefono", "mail", "nacimiento_en", "run", "sucursal", "nacionalidad", "direccion", "cargo", "centro_costo", "supervisor_id"]))
-	.then(modifyField('supervisor_id', link))
-	.then(toTextNode)
-	.then(run)
-	.catch( (s) => console.error('fool') ) ;
+/*
+ *
+ * Datos básicos del colaborador
+ *
+ *
+ */
 
-dataPromise
-	.then(filterObj(["run"]))
+data
+	.then(pick(allowed))
+	.then(modify('supervisor_id', prepend('/colaborador/')))
+	.then(duplicate('supervisor_id', 'supervisor'))
+	.then(modify('supervisor', (_) => 'Ver supervisor'))
+	.then(merge(['supervisor_id', 'supervisor'], href))	
+	.then(bulkModify(allowed.slice(0,-1).concat('supervisor'), p))
+	.then(runWithKeys)
+	.catch(log);
+
+data
 	.then(function (run) {
-		if (run)
 		$("colaborador-pic").src = "/assets/images/colaboradores/" + run.run + ".jpg";
 	})
-	.catch( (s) => console.error('fool') ) ;
+	.catch(log) ;
 
+/*
+ *
+ * Solicitudes del colaborador
+ *
+ *
+ */
 
-dataPromise
-	.then(prop("json_agg"))
-	.then(map(filterObj(["beneficio", "solicitado_en", "estado", "monto"])))
-	.then(map(modifyField("monto", prepend("$") )))
-	.then(map(tr("solicitudes")))
-	.then(run)
-	.catch( (s) => console.error('fool') ) ;
+const keysBeneficios = ["beneficio", "solicitado_en", "estado", "monto"];
+const tr = elem('tr');
+const td = elem('td');
 
-function $$(el) {return document.createElement(el);}
+data
+	.then(prop(['json_agg']))
+	.then(map(pick(keysBeneficios)))
+	.then(map(modify("monto", prepend("$"))))
+	.then(map(bulkModify(keysBeneficios, td)))
+	.then(map(reduce(keysBeneficios, tr)))
+	.then(runAll('solicitudes'))
+	.catch(log);
 
-function link(value) {
-	var a = $$('a');	
-	a.textContent='Ver supervisor';
-	a.href = value;
-	return a;
-}
+/*
+ *
+ * Cargas del colaborador
+ *
+ */
 
-dataPromise
-	.then(prop("cargas"))
-	.then(map(filterObj(["carga", "nacido_en", "es_hijo"])))
+const keysCargas = ["carga", "nacido_en", "es_hijo"];
+
+data
+	.then(prop(['cargas']))
+	.then(map(pick(keysCargas)))
 	.then(map(duplicate("nacido_en", "edad")))
-	.then(map(modifyField("edad", dateDiff(Date.now()))))
-	.then(map(modifyField("es_hijo", ifTrueThen('Hijo', 'Cónyuge'))))
-	.then(map(tr("cargas")))
-	.then(run)
-	.catch( (s) => console.error('fool') ) ;
+	.then(map(modify("edad", dateDiff(Date.now()))))
+	.then(map(modify("es_hijo", ifTrueElse('Hijo', 'Cónyuge'))))
+	.then(map(bulkModify(keysCargas.concat('edad'), td)))
+	.then(map(reduce(keysCargas.concat('edad'), tr)))
+	.then(runAll('cargas'))
+	.catch(log);
 
-function ifTrueThen(text, otherwise) {
-	return function(bool) {
-		return bool ? text : otherwise;
-	}
-}
+populate(); 
 
-function dateDiff(d2) {
-	return function(d1) {
-		var d = new Date();
-		d.setYear(d1.split("-")[0]);
-		d.setMonth(d1.split("-")[1], d1.split("-")[2]);
-		var diff= d2 - d.getTime();
-		var ageDate = new Date(diff); // miliseconds from epoch
-		return Math.abs(ageDate.getUTCFullYear() - 1970);
-	}
-}
+/*
+ *
+ *
+ * EVENT HANDLING
+ *
+ *
+ */
 
-$("btn-modal").addEventListener("click", function() {
+
+$("btn-open-modal").addEventListener("click", function() {
 	$("beneficio-modal").style.display = "inherit";
 });
 
-$("close-modal").addEventListener("click", function() {
+$("btn-close-modal").addEventListener("click", function() {
 	$("beneficio-modal").style.display = "none";
 });
 
-$("btn-send").addEventListener("click", sendForm);
+$("btn-submit-modal").addEventListener("click", submit);
 
-function runO(o) {
-	for (var k in o) {
-		if (o.hasOwnProperty(k)) {
-			$(o[k].fatherId).appendChild(o[k]);	
+// TODO$('resuelto-en').addEventListener('change', d);
+
+/*
+ *
+ *
+ * ON SELECT CHANGE
+ *
+ *
+ */
+
+function populate() {
+	const data = get("/api/beneficios?individuales=true");
+	const input = typed(elem('input'));
+	const option = valued(elem('option'));
+	const select = named(elem('select'));
+	const mergeOpt = (value, name) => option(value)(name);
+
+	data.then(map(merge(['id', 'beneficio'], mergeOpt)))
+		.then( function( arr ) { //groupBy('beneficio')
+			return arr.reduce( function(acc, o) {
+				acc.appendChild(o.beneficio);
+				return acc;
+			}, document.createDocumentFragment());
+		})
+		.then(select('beneficio_id'))
+		.then(runAll('beneficio_id-select'))
+		.then(tap(on('beneficio_id', 'change', change())))
+		.catch(log);
+
+	function on(id, event, listener) {
+		return function() {
+			document.getElementById(id).addEventListener(event, listener, false);
+		}
+	}
+
+	function change() {
+		const div = classed(elem('div'));
+		const label = elem('label');
+		const fecha = attr(input('text')); //not 'date' bc of ie11
+		const number = attr(input('number')) 
+		const monto = {name: 'monto', placeholder:'Ingresa el monto'};
+		const resuelto = {name: 'resuelto_en', placeholder:'Ingresa la fecha de resolucióń'};
+
+		return function(ev) {
+			var os = ev.target.options;
+			var id = parseInt(os.item(os.selectedIndex).value);
+			data
+				.then(tap(clear('dynamic-form')))
+				.then(where('id', id))
+				.then(pick(['es_costeable', 'es_aprobado']))
+				.then(rename('es_costeable', 'monto'))
+				.then(rename('es_aprobado', 'resuelto_en'))
+				.then(modify('monto', number(monto)))
+				.then(modify('monto', div('col-md-12 dynamic-form')))
+				.then(modify('resuelto_en', fecha(resuelto)))
+				.then(modify('resuelto_en', div('col-md-12 dynamic-form')))
+				.then(tap(on('resuelto_en', 'change', pop)))
+				.then(runWithKeys)
+				.catch(log);
+		}
+
+		function pop(ev) {
+			/*Promise.resolve({esta_aprobado: true})
+				.then(modify('esta_aprobado', div('switch-right')))
+				.then(modify('esta_aprobado', div('switch-left')))
+				.then(modify('esta_aprobado', div('switch-title')))
+				.then(modify('esta_aprobado', div('switch-field')))
+				.then(modify('esta_aprobado', div('col-md-12 dynamic-form')))
+			*/
 		}
 	}
 }
 
-function put(url, hs, fData) {
-	hs.append('Content-Type', 'application/x-www-form-urlencoded');
-	var opts = { 
-		method: "PUT",
-		body:urlencodeFormData(fData),
-		headers: hs
+function submit(ev) {
+	var solicitud = new Form(ev.target.form);
+	solicitud.append('colaborador_id', uid, uid);
+	const opts = {
+		form: solicitud
 	};
-	return fetch(url, opts);
+	var sent = put('/api/solicitud', opts); 
+	var keys = ['beneficio_id', 'resuelto_en', 'monto'];
+
+	sent.then(pick(keys))
+		.then(bulkModify(keys, td))
+		.then(reduce(keys, tr))
+		.then(tap(hide(ev.target.form.parentElement.parentElement)))
+		.then(runAll('solicitudes'))
+		.catch(log);
 }
 
-function get(url, hs) {
-	var opts = { 
-		method: "GET",
-		headers: hs
-	};
-	return fetch(url, opts).then( function (r) { return r.json()});
-}
-
-dataI = get("/api/beneficios?individuales=true");
-
-dataI.then(Dom.select("beneficio_id")).then(run)
-	.catch( (s) => console.error('fool') ) ;
-
-function filter(id) {
-	return function (ar) {
-		return ar.filter( function(obj) {
-			return obj.id === id;
-		})[0];
-	}
-}
-
-function hide(el) {
-	return function(_){
-		el.style.display = "none";
-		return _;
-	}
-}
-
-function Form($form) {
-	var o = {};
-	var els = $form.elements
-	var l = els.length;
-	var i = 0;
-	for(i;i<l;i++) {
-		var el = els.item(i);
-		if (el.type == 'hidden') continue;
-		if (el.nodeName === 'SELECT') {
-			o[el.id] = el.options.item(el.options.selectedIndex).label;
-			continue;
-		}
-		o[el.id] = [el.value]	
-	}
-	this.obj = o;
-}
-
-Form.prototype.map = function() {
-	var self = this;
-	return function (_) {
-		return self.obj;
-	}
-}
-
-function sendForm() {
-	var f = new FormData($("beneficio-form"));
-	f.append("colaborador_id", uid);
-	var sent = put("/api/solicitud", hs, f);
-
-	sent.then((new Form('beneficio-form').map()))
-		.then(tr("solicitudes"))
-		.then(hide('beneficio-modal'))
-		.then(run)
-		.catch( (s) => console.error('fool') ) ;
-}
-
-function prepend(char) {
-	return function(str) {
-		return str == null ? 'N/A' : char + str;	
-	}
-}
-
-function prop(p) {
-	return function(o) {
-		return o[p];
-	}
-}
-
-
-function getJson(url, opts) {
-	opts = opts || {};
-	return fetch(url, opts).then( res => res.json())
-}	
-
-function filterObj(fields) {
-	return function(obj) {
-		if (!Array.isArray(fields)) 
-			throw new TypeError("filterObj() requiere un array", "lib.js");
-		var o = {};
-		fields.forEach(function(field) { 
-			o[field] = obj[field];
-		});
-		return o;
-	}
-}
-
-function map(func) {
-	return function(array) {
-		return array.map( function(value) { return func(value) })
-	}
-}
-
-function modifyField(field, func) {
-	return function(obj) {
-		obj[field] = func(obj[field]);
-		return obj;
-	};
-}
-
-function modify(field, func) {
-	return function(obj) {
-		obj[field] = func(field, obj[field]);
-		return obj;
-	};
-}
-
-function toTextNode(obj) {
-	return Object.keys(obj).map( function(field) {
-		if (!obj[field]) {
-			var textNode = document.createTextNode("N/A");
-			textNode.fatherId = field; 
-			return textNode;
-		}
-		var o = obj[field];
-		if (o.nodeName) {
-			o.fatherId = field;
-			return obj[field];
-		}
-		var textNode = document.createTextNode(obj[field]);
-		textNode.fatherId = field; 
-		return textNode;
-	});
-}
-
-function tr(father) {
-	return function(rowObj) {
-		var tr = document.createElement("tr");
-		tr.fatherId = father;
-		return Object.keys(rowObj).map( function(col) {
-			var td = document.createElement('td');
-			td.textContent = rowObj[col];
-			return td;
-		}).reduce ( function( ac, e ) { 
-			ac.appendChild(e);
-			return ac
-		}, tr);
-	}
-}
-
-function run(els) {
-	if (Array.isArray(els))
-		return els.map( function (el) {
-			$(el.fatherId).appendChild(el);
-			return el;
-		});
-	return $(els.fatherId).appendChild(els);
-}
-
-function $(id) {
-	return document.getElementById(id);
-}
-
-//https://stackoverflow.com/questions/7542586/new-formdata-application-x-www-form-urlencoded/38931547#38931547
-function urlencodeFormData(fd){
-    var s = '';
-    function encode(s){ return encodeURIComponent(s).replace(/%20/g,'+'); }
-    for(var pair of fd.entries()){
-        if(typeof pair[1]=='string'){
-            s += (s?'&':'') + encode(pair[0])+'='+encode(pair[1]);
-        }
-    }
-    return s;
-}
-
-function delPropOrElse(field, el) {
-	return function(obj) {
-		if (obj[field]) {
-			//obj[field] = Dom[el](field, obj[field]);
-			return obj;
-		}
-	}
-}
-
-
-$('beneficio-select').addEventListener('change', c);
-$('resuelto_en').addEventListener('change', d);
-
-function d() {
-	/*
-	 *  <div class="switch-field">
-      <div class="switch-title">Is this awesome?</div>
-      <input type="radio" id="switch_left" name="switch_2" value="yes" checked/>
-      <label for="switch_left">Yes</label>
-      <input type="radio" id="switch_right" name="switch_2" value="no" />
-      <label for="switch_right">No</label>
-    </div>
-	 *
-	 */
-}
-
-
-function c(ev) {
-	var id = parseInt(ev.target.options.item(ev.target.options.selectedIndex).value);
-	dataI.then(filter(id))
-		.then(filterObj(['es_costeable', 'es_aprobado']))
-		.then(keepTrue)
-		.then(rename('es_costeable', 'monto'))
-		.then(rename('es_aprobado', 'resuelto_en'))
-		.then(modify('monto', containerize('Monto', 'number')))
-		.then(modify('resuelto_en', containerize('Fecha resolución', 'date')))
-		.then(clearDom)
-		.then(runO)
-		.catch( (s) => console.error('fool') ) ;
-}
-
-function clearDom(obj) {
-	var p = $('beneficio-form');
-	var ch = p.children;
-	var i = 1; var l= ch.length;
-	for (;i<l;i++) {
-		p.removeChild(ch.item(i))
-	}
-	return obj;
-}
-
-function keepTrue(o) {
-	var o2 = {};
-	for (k in o) {
-		if (o[k]) o2[k] = o[k];
-	}
-	return o2;
-}
-
-function containerize(labelText, type) {
-	return function(id) {
-		var div = Dom.div([Dom.label(labelText), Dom.div([Dom[type](id)], "col-md-12")]);
-		return div;
-	}
-}
-
-function merge(field1, field2) {
-	return function (obj) {
-		obj[field1] = [field1, field2];
-		return obj;
-	}
-}
-
-function rename(fieldFrom, fieldTo) {
-	return function(o) {
-		console.log(o);
-		o[fieldTo] = o[fieldFrom];
-		delete o[fieldFrom];
-		return o
-	}
-}
+/*
+<div class="form-group">
+	<div class="col-sm-12">
+		<div class="switch-field">
+			  <div class="switch-title">¿Está aprobado?</div>
+			  <input type="radio" id="switch_left" name="esta_aprobado" value="true"/>
+			  <label for="switch_left">Sí</label>
+			  <input type="radio" id="switch_right" name="esta_aprobado" value="false" checked/>
+			  <label for="switch_right">No</label>
+		</div>
+	</div>
+</div>
+*/

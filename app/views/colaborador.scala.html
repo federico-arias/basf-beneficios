@@ -94,7 +94,7 @@ thead > tr > th:first-child {
 									<h4>Centro de costos</h4>
 									<p id="centro_costo"></p>
 									<h4>Supervisor</h4>
-									<div id="supervisor_id"></div>
+									<div id="supervisor"></div>
 							</div>
 						</div> <!-- /white-box -->
 					</div> <!-- /col -->
@@ -116,7 +116,7 @@ thead > tr > th:first-child {
                             </div>
 							<div class="form-group">
 								<div class="col-sm-12">
-									<button id="btn-modal" class="btn btn-success">Ingresar Beneficio</button>
+									<button id="btn-open-modal" class="btn btn-success">Ingresar Beneficio</button>
 								</div>
 							</div>
 						</div> <!-- /White Box -->
@@ -153,31 +153,26 @@ thead > tr > th:first-child {
 		<!-- Modal content-->
 		<div class="modal-content">
 		  <div class="modal-header">
-			<button type="button" id="close-modal" class="close" data-dismiss="modal">&times;</button>
+			<button type="button" id="btn-close-modal" class="close" data-dismiss="modal">&times;</button>
 			<h4 class="modal-title">Ingresar Beneficio</h4>
 		  </div>
 		  <div class="modal-body">
 			<form id="beneficio-form" class="form-horizontal form-material">
 				<div class="form-group" id="beneficio-form-group">
-					<label class="col-sm-12">Beneficio</label>
-					<div id="beneficio-select" class="col-sm-12">
+					<div class="col-sm-12" id="beneficio_id-select">
+						<label class="col-sm-12">Beneficio</label>
 					</div>
 				</div>
-				<div class="form-group">
-					<div class="col-sm-12">
-						<div class="switch-field">
-							  <div class="switch-title">¿Está aprobado?</div>
-							  <input type="radio" id="switch_left" name="esta_aprobado" value="true"/>
-							  <label for="switch_left">Sí</label>
-							  <input type="radio" id="switch_right" name="esta_aprobado" value="false" checked/>
-							  <label for="switch_right">No</label>
-						</div>
-					</div>
+				<div class="form-group" id="monto">
 				</div>
-			</form>
-		  </div>
+				<div class="form-group" id="resuelto_en">
+				</div>
+				<div class="form-group" id="esta_aprobado">
+				</div>
 		  <div class="modal-footer">
-			<button id="btn-send" type="button" class="btn btn-danger" data-dismiss="modal">Crear</button>
+			<button form="beneficio-form" id="btn-submit-modal" type="button" class="btn btn-danger" data-dismiss="modal">Crear</button>
+		  </div>
+			</form>
 		  </div>
 		</div>
 	  </div>

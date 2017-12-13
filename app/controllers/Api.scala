@@ -85,7 +85,7 @@ class Api @Inject()(c: Colaborador, s: Solicitud, b: Beneficio, p: Presupuesto, 
 		"beneficio_id" -> number,
 		"solicitado_en" -> optional(date("yyyy-MM-dd")),
 		"resuelto_en" -> optional(date("yyyy-MM-dd")),
-		"esta_aprobado" -> optional(checked("on")),
+		"esta_aprobado" -> optional(boolean),
 		"monto" -> optional(number),
 		"moneda_id" -> optional(number)
 		)(SolicitudData.apply)(SolicitudData.unapply))

@@ -1,5 +1,39 @@
 import {$$, $} from './modules/utils.js';
 
+export function hide(el) {
+	if (typeof el === 'string') el = $(el);
+	return function(_){
+		el.style.display = "none";
+		return _;
+	}
+}
+
+export function show(el) {
+	if (typeof el === 'string') el = $(el);
+	return function(_){
+		el.style.display = "inherit";
+		return _;
+	}
+}
+
+function listen(event) {
+	return function(elem, func) {
+		if (typeof elem === 'string') elem = $(elem);
+		elem.addEventListener(event,func,false);
+	}
+}
+
+
+export function sibling(elemName) {
+	return function(el) {
+		var el2 = elem(elemName)('');
+		var frag = document.createElementFragment()
+		frag.apppendChild(el);
+		frag.apppendChild(el2);
+		return frag;
+	}
+}
+
 export function reduce(fields, func) {
 	return function (obj) {
 		return func(
@@ -11,13 +45,76 @@ export function reduce(fields, func) {
 	}
 }
 
+export function clear(className) {
+	return function(_) {
+		var els = document.getElementsByClassName(className);
+		var l = els.length;
+		for (var i = 0; i<l;i++) {
+			els.item(0).parentElement.removeChild(els.item(0));
+		}
+	}
+}
+
 export function elem(elType) {
 	return function(child) {
 		var el = $$(elType);
-		if (typeof child !== 'object' || typeof child == 'undefined')
+		if (typeof child !== 'object' || typeof child == 'undefined' || child === null)
 			child = document.createTextNode(child);
 		el.appendChild(child);	
 		return el;
+	}
+}
+
+export function attr(elem) {
+	return function(attrs) {
+		return function(child) {
+			var el = elem(child);
+			Object.keys(attrs).forEach( function(a) {
+				el[a] = attrs[a];
+			});
+			return el;
+		}
+	}
+}
+
+export function classed(elem) {
+	return function(className) {
+		return function(child) {
+			var el = elem(child);
+			el.className = className;
+			return el;
+		}
+	}
+}
+
+export function valued(func) {
+	return function(value) {
+		return function(child) {
+			var el = func(child);
+			el.value = value;
+			return el;
+		}
+	}
+}
+
+export function typed(func) { // func :: String || DomNode -> DomNode
+	return function(typeName) {
+		return function(child) {
+			var el = func(child);
+			el.type = typeName;
+			return el;
+		}
+	}
+}
+
+export function named(func) { // func :: String || DomNode -> DomNode
+	return function(name) {
+		return function(child) {
+			var el = func(child);
+			el.id = name;
+			el.name = name;
+			return el;
+		}
 	}
 }
 
@@ -85,3 +182,5 @@ export function href(src, text) {
 	a.textContent = text;
 	return a;
 }
+
+export const listenClick = listen('click');

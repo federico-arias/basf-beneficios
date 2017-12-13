@@ -1,6 +1,8 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
+var _Form = require('./modules/Form.js');
+
 var _fetch = require('./modules/fetch.js');
 
 var _jsCookie = require('js-cookie');
@@ -15,20 +17,13 @@ var _lens = require('./modules/lens.js');
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
-var jwt = Cookie.get('jwt');
+var currency = '$';
 var bid = window.location.href.split("/").pop();
-var url = '/api/beneficio/' + bid;
-var opts = { headers: [{ k: 'Authorization', v: 'Bearer ' + jwt }] };
-var data = (0, _fetch.get)(url, opts);
+var data = (0, _fetch.get)('/api/beneficio/' + bid);
 var allowed = ["beneficio", "categoria", "subcategoria", "pais"];
 var p = (0, _dom.elem)('p');
 // Plot beneficios data
 data.then((0, _utils.pick)(allowed)).then((0, _utils.modify)('beneficio', p)).then((0, _utils.modify)('categoria', p)).then((0, _utils.modify)('subcategoria', p)).then((0, _utils.modify)('pais', p)).then(_dom.runWithKeys).catch(_utils.log);
-
-// Plot presupuesto data
-var td = (0, _dom.elem)('td');
-var tr = (0, _dom.elem)('tr');
-data.then((0, _lens.prop)(['presupuesto'])).then((0, _utils.map)((0, _utils.pick)(['monto', 'asignacion']))).then((0, _utils.map)((0, _utils.modify)('monto', (0, _utils.prepend)('$')))).then((0, _utils.map)((0, _utils.modify)('monto', td))).then((0, _utils.map)((0, _utils.modify)('asignacion', td))).then((0, _utils.map)((0, _dom.reduce)(['monto', 'asignacion'], tr))).then((0, _dom.runAll)('presupuestos')).catch(_utils.log);
 
 /* 
  *
@@ -38,16 +33,15 @@ data.then((0, _lens.prop)(['presupuesto'])).then((0, _utils.map)((0, _utils.pick
  *
  */
 
-function submitForm() {
-	var form = new Form('put-presupuesto');
-	form.append('beneficio_id', bid);
+function submit(ev) {
+	var presupuesto = new _Form.Form(ev.target.form);
+	presupuesto.append('beneficio_id', bid, bid);
 	var opts = {
-		form: form.value,
-		headers: [{ k: 'Authorization', v: 'Bearer ' + jwt }]
+		form: presupuesto
 	};
-	var sent = (0, _fetch.post)('/api/presupuesto', opts);
-
-	sent.then(form.namedValues).then((0, _utils.pick)(['presupuesto', 'monto'])).then(run).then(tap(hide('presupuesto-modal'))).catch(_utils.log);
+	var sent = (0, _fetch.put)('/api/presupuesto', opts);
+	var keys = ['solicitado_en', 'monto'];
+	sent.then((0, _utils.pick)(keys)).then((0, _utils.modify)('monto', (0, _utils.prepend)(currency))).then((0, _utils.bulkModify)(keys, td)).then((0, _dom.reduce)(keys, tr)).then((0, _utils.tap)((0, _dom.hide)(ev.target.form.parentElement.parentElement.parentElement))).then((0, _dom.runAll)('presupuestos')).catch(_utils.log);
 }
 
 /* 
@@ -58,27 +52,102 @@ function submitForm() {
  *
  */
 
-$("btn-open-modal").addEventListener("click", function () {
-	$("presupuesto-modal").style.display = "inherit";
-});
+(0, _dom.listenClick)('btn-open-modal', (0, _dom.show)('presupuesto-modal'));
+(0, _dom.listenClick)('btn-close-modal', (0, _dom.hide)('presupuesto-modal'));
+(0, _dom.listenClick)('btn-submit-modal', submit);
 
-$("btn-close-modal").addEventListener("click", function () {
-	$("presupuesto-modal").style.display = "none";
-});
+// Plot presupuesto data
+var td = (0, _dom.elem)('td');
+var tr = (0, _dom.elem)('tr');
+data.then((0, _lens.prop)(['presupuesto'])).then((0, _utils.map)((0, _utils.pick)(['monto', 'asignacion']))).then((0, _utils.map)((0, _utils.modify)('monto', (0, _utils.prepend)(currency)))).then((0, _utils.map)((0, _utils.modify)('monto', td))).then((0, _utils.map)((0, _utils.modify)('asignacion', td))).then((0, _utils.map)((0, _dom.reduce)(['asignacion', 'monto'], tr))).then((0, _dom.runAll)('presupuestos')).catch(_utils.log);
 
-$('btn-submit-modal').addEventListener('click', submitForm);
-
-},{"./modules/dom.js":2,"./modules/fetch.js":3,"./modules/lens.js":4,"./modules/utils.js":6,"js-cookie":7}],2:[function(require,module,exports){
+},{"./modules/Form.js":2,"./modules/dom.js":3,"./modules/fetch.js":4,"./modules/lens.js":5,"./modules/utils.js":7,"js-cookie":8}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
+exports.Form = Form;
+function Form(form) {
+	//searches elements by traversing the <form> tag picking only input forms
+	var self = this;
+	this.objs = [];
+	this.elems = _traverse(form, _filter(['SELECT', 'INPUT']));
+	this.elems.forEach(function (el) {
+		var name = el.name;
+		var value = el.value;
+		var label = el.label === undefined ? el.value : el.label;
+		if (el.nodeName.toUpperCase() == 'SELECT') {
+			value = el.options.item(el.options.selectedIndex).value;
+			label = el.options.item(el.options.selectedIndex).label;
+		}
+		self.objs.push({
+			name: name,
+			value: value,
+			label: label
+		});
+	});
+}
+
+function _filter(allowed) {
+	return function (el, acc) {
+		if (!el.checked && el.type === 'radio') return acc;
+		if (allowed.indexOf(el.nodeName.toUpperCase()) !== -1) {
+			return acc.concat(el);
+		}
+		return acc;
+	};
+}
+
+function _traverse(root, func) {
+	function iter(elem, acc) {
+		acc = func(elem, acc);
+		if (elem.children.length) acc = iter(elem.firstElementChild, acc);
+		var next = elem.nextElementSibling;
+		if (next) return iter(elem.nextElementSibling, acc);
+		return acc;
+	}
+
+	return iter(root.firstElementChild, []);
+}
+
+Form.prototype.labels = function () {
+	return this.objs.reduce(function (acc, obj) {
+		acc[obj.name] = obj.label;
+		return acc;
+	}, {});
+};
+
+Form.prototype.urlEncoded = function () {
+	return this.objs.map(function (obj) {
+		return escape(obj.name) + '=' + escape(obj.value);
+	}).join('&');
+};
+
+Form.prototype.append = function (key, value, label) {
+	this.objs.push({ name: key, value: value, label: label });
+};
+
+},{}],3:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.listenClick = undefined;
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
+exports.hide = hide;
+exports.show = show;
+exports.sibling = sibling;
 exports.reduce = reduce;
+exports.clear = clear;
 exports.elem = elem;
+exports.classed = classed;
+exports.valued = valued;
+exports.typed = typed;
+exports.named = named;
 exports.elems = elems;
 exports.tr = tr;
 exports.runAll = runAll;
@@ -87,6 +156,39 @@ exports.run = run;
 exports.href = href;
 
 var _utils = require('./modules/utils.js');
+
+function hide(el) {
+	if (typeof el === 'string') el = (0, _utils.$)(el);
+	return function (_) {
+		el.style.display = "none";
+		return _;
+	};
+}
+
+function show(el) {
+	if (typeof el === 'string') el = (0, _utils.$)(el);
+	return function (_) {
+		el.style.display = "inherit";
+		return _;
+	};
+}
+
+function listen(event) {
+	return function (elem, func) {
+		if (typeof elem === 'string') elem = (0, _utils.$)(elem);
+		elem.addEventListener(event, func, false);
+	};
+}
+
+function sibling(elemName) {
+	return function (el) {
+		var el2 = elem(elemName)('');
+		var frag = document.createElementFragment();
+		frag.apppendChild(el);
+		frag.apppendChild(el2);
+		return frag;
+	};
+}
 
 function reduce(fields, func) {
 	return function (obj) {
@@ -97,12 +199,65 @@ function reduce(fields, func) {
 	};
 }
 
+function clear(className) {
+	return function (_) {
+		var els = document.getElementsByClassName(className);
+		var l = els.length;
+		for (var i = 0; i < l; i++) {
+			els.item(0).parentElement.removeChild(els.item(0));
+		}
+	};
+}
+
 function elem(elType) {
 	return function (child) {
 		var el = (0, _utils.$$)(elType);
-		if ((typeof child === 'undefined' ? 'undefined' : _typeof(child)) !== 'object' || typeof child == 'undefined') child = document.createTextNode(child);
+		if ((typeof child === 'undefined' ? 'undefined' : _typeof(child)) !== 'object' || typeof child == 'undefined' || child === null) child = document.createTextNode(child);
 		el.appendChild(child);
 		return el;
+	};
+}
+
+function classed(elem) {
+	return function (className) {
+		return function (child) {
+			var el = elem(child);
+			el.className = className;
+			return el;
+		};
+	};
+}
+
+function valued(func) {
+	return function (value) {
+		return function (child) {
+			var el = func(child);
+			el.value = value;
+			return el;
+		};
+	};
+}
+
+function typed(func) {
+	// func :: String || DomNode -> DomNode
+	return function (typeName) {
+		return function (child) {
+			var el = func(child);
+			el.type = typeName;
+			return el;
+		};
+	};
+}
+
+function named(func) {
+	// func :: String || DomNode -> DomNode
+	return function (name) {
+		return function (child) {
+			var el = func(child);
+			el.id = name;
+			el.name = name;
+			return el;
+		};
 	};
 }
 
@@ -166,17 +321,27 @@ function href(src, text) {
 	return a;
 }
 
-},{"./modules/utils.js":5}],3:[function(require,module,exports){
+var listenClick = exports.listenClick = listen('click');
+
+},{"./modules/utils.js":6}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
-exports.post = exports.get = undefined;
+exports.put = exports.post = exports.get = undefined;
 
 var _promisePolyfill = require('promise-polyfill');
 
 var _promisePolyfill2 = _interopRequireDefault(_promisePolyfill);
+
+var _Form = require('./Form.js');
+
+var _jsCookie = require('js-cookie');
+
+var Cookie = _interopRequireWildcard(_jsCookie);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -187,18 +352,22 @@ if (!window.Promise) {
 
 function fetch(method) {
 	return function (url, opts) {
+		opts = opts || {};
 		var p = new _promisePolyfill2.default(function (resolve, reject) {
 			var xhr = new XMLHttpRequest();
 			xhr.open(method, url);
-			opts.headers.forEach(function (h) {
+			opts.headers ? opts.headers.forEach(function (h) {
 				xhr.setRequestHeader(h.k, h.v);
-			});
+			}) : null;
 			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-			var send = opts.formId ? parseForm(opts.formId).join('&') : null;
+			xhr.setRequestHeader('Authorization', 'Bearer ' + Cookie.get('jwt'));
+			var send = opts.form ? opts.form.urlEncoded() : null;
 			xhr.send(send);
+
 			xhr.onreadystatechange = function () {
 				if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-					resolve(JSON.parse(xhr.responseText));
+					if (send === null) return resolve(JSON.parse(xhr.responseText));
+					resolve(opts.form.labels());
 				}
 			};
 		});
@@ -206,29 +375,11 @@ function fetch(method) {
 	};
 }
 
-function parseForm(sFormId) {
-	var oField;
-	var segments = [];
-	var oTarget = document.getElementById(sFormId);
-	for (var nItem = 0; nItem < oTarget.elements.length; nItem++) {
-		oField = oTarget.elements[nItem];
-		if (!oField.hasAttribute("name")) {
-			continue;
-		}
-		if (oField.nodeName === 'SELECT') {
-			var idx = oField.options.selectedIndex;
-			segments.push(escape(oField.name) + "=" + escape(String(oField.options.item(idx).value)));
-			continue;
-		}
-		segments.push(escape(oField.name) + "=" + escape(String(oField.value)));
-	}
-	return segments;
-}
-
 var get = exports.get = fetch('GET');
 var post = exports.post = fetch('POST');
+var put = exports.put = fetch('PUT');
 
-},{"promise-polyfill":8}],4:[function(require,module,exports){
+},{"./Form.js":2,"js-cookie":8,"promise-polyfill":9}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -272,7 +423,7 @@ function _assoc(prop, val, obj) {
 	return result;
 }
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -288,24 +439,79 @@ function $$(name) {
 	return document.createElement(name);
 }
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
-exports.coalesce = coalesce;
+exports.duplicate = duplicate;
+exports.where = where;
+exports.rename = rename;
+exports.ifTrueElse = ifTrueElse;
+exports.dateDiff = dateDiff;
 exports.log = log;
+exports.tap = tap;
 exports.parseQueryString = parseQueryString;
 exports.map = map;
 exports.modify = modify;
+exports.bulkModify = bulkModify;
 exports.prepend = prepend;
 exports.merge = merge;
 exports.pick = pick;
-function coalesce(elseVal, nullable) {}
+function duplicate(f1, f2) {
+	return function (o) {
+		o[f2] = o[f1];
+		return o;
+	};
+}
+
+function where(key, value) {
+	return function (arr) {
+		return arr.filter(function (o) {
+			return o[key] === value;
+		});
+	};
+}
+
+function rename(fieldFrom, fieldTo) {
+	return function (o) {
+		if (o.hasOwnProperty(fieldFrom)) {
+			o[fieldTo] = o[fieldFrom];
+			delete o[fieldFrom];
+		}
+		return o;
+	};
+}
+
+function ifTrueElse(text, otherwise) {
+	return function (bool) {
+		return bool ? text : otherwise;
+	};
+}
+
+function dateDiff(d2) {
+	return function (d1) {
+		var d = new Date();
+		d.setYear(d1.split("-")[0]);
+		d.setMonth(d1.split("-")[1], d1.split("-")[2]);
+		var diff = d2 - d.getTime();
+		var ageDate = new Date(diff); // miliseconds from epoch
+		return Math.abs(ageDate.getUTCFullYear() - 1970);
+	};
+}
+
 function log(e) {
 	console.error(e);
 }
+
+function tap(func) {
+	return function (obj) {
+		func(obj);
+		return obj;
+	};
+}
+
 function parseQueryString(url) {
 	var urlParams = {};
 	url.replace(new RegExp("([^?=&]+)(=([^&]*))?", "g"), function ($0, $1, $2, $3) {
@@ -325,7 +531,16 @@ function map(func) {
 
 function modify(field, func) {
 	return function (obj) {
-		obj[field] = func(obj[field]);
+		if (obj.hasOwnProperty(field)) obj[field] = func(obj[field]);
+		return obj;
+	};
+}
+
+function bulkModify(fields, func) {
+	return function (obj) {
+		fields.forEach(function (field) {
+			obj = modify(field, func)(obj);
+		});
 		return obj;
 	};
 }
@@ -361,7 +576,7 @@ function pick(fields) {
 	};
 }
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 /*!
  * JavaScript Cookie v2.2.0
  * https://github.com/js-cookie/js-cookie
@@ -528,7 +743,7 @@ function pick(fields) {
 	return init(function () {});
 }));
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 (function (root) {
 
   // Store setTimeout reference so promise-polyfill will be unaffected by

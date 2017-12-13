@@ -5,10 +5,8 @@ import {map, merge, pick, modify, prepend} from './modules/utils.js';
 import {run, tr, href} from './modules/dom.js';
 
 function init() {
-	const jwt = Cookie.get('jwt');
 	const url = "/api/colaborador/search?searchterm=" + parse(location.search).searchterm;
-	const opts = {headers: [{k:'Authorization', v: 'Bearer ' + jwt}]};
-	const data = get(url, opts);
+	const data = get(url);
 
 	data
 		.then(map(pick(['id', 'colaborador', 'run'])))
