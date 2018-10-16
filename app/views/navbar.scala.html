@@ -28,11 +28,19 @@ nav.navbar .logo {
 					</a> 
 				</form>
 			</li>
-			<li>
-				<a class="profile-pic" href="#"> 
+			<li id="profile" style='position:relative;'>
+				<a id="profile-pic" class="profile-pic" href="#"> 
 					<img src="@routes.Assets.versioned("images/profile-pic.jpg")" alt="user-img" width="36" class="img-circle">
 					<b class="hidden-xs">Libia</b>
 				</a>
+				<div class='mnu-profile-container'>
+					<ul class='mnu-profile-mnu'>
+						<li>Moneda: 
+							<a href='/' class="active">CLP</a> | <a href='/'>PEN</a>
+						</li>
+						<li><a href='/'>Cerrar sesión</a></li>
+					</ul>
+				</div>
 			</li>
 		</ul> <!-- /.navbar-top-links -->
 	</div> <!-- /.navbar-header -->

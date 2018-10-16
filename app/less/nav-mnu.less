@@ -1,0 +1,18 @@
+@profile-width: 108px;
+@profile-height: 60px;
+@mnu-width: 200px;
+
+.mnu-profile-container {
+    background-color: #fff;
+    position: absolute;
+    top: @profile-height;
+    border: 1px solid lightgrey;
+    width: @mnu-width;
+    left: -(@mnu-width - @profile-width);
+    padding: 20px;
+    box-shadow: 0 2px 2px rgba(12,13,14,0.2);
+}
+
+.mnu-profile-container ul li {
+	list-style: none;	
+}

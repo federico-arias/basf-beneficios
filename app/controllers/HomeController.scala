@@ -48,6 +48,10 @@ class HomeController extends Controller {
 		Ok(html.beneficio())
 	}
 
+	def inspectJwt = AuthAction { req: AuthReq[AnyContent] =>
+		Ok(req.user.map(_.name).getOrElse("undefined"))
+	}
+
 	def auth = Action { req: Request[AnyContent] =>
 		req.cookies.get("jwt") match {
 			case Some(_) => Ok(html.home())
@@ -67,20 +71,27 @@ class HomeController extends Controller {
 
 object Login {
 	def apply (u: String, p: String): Option[String] = {
+		//user logic
+		/*
+		usr.validate(userProvidedPassword, actualPassword)
+		*/
 		if (u == "libia" && p == "leon") 
-			Some(Jwt.encode("""{"user":1}""", "secreterijillo", JwtAlgorithm.HS384))
+			Some(Jwt.encode("""{"user":1, name:"Libia"}""", "secreterijillo", JwtAlgorithm.HS384))
 		else None
 	}
 }
 
 object User {
+	//authenticates user, taking jwt from request's auth header
+	//then returns an User object
 	def auth[A](req: Request[A]): Option[User] = {
 		val Re = """(?<=Bearer\s)\S+""".r
 		val authHeader = req.headers.get(http.HeaderNames.AUTHORIZATION)
 		authHeader	
 			.flatMap(ah => Re.findFirstIn(ah))
 			.flatMap(token => Jwt.decodeRawAll(token, "secreterijillo", Seq(JwtAlgorithm.HS384)).toOption)
-			.map(t => t._2)
+			//.map(t => t._2)
+			.flatMap(t => (Json.parse(t._2) \ "name").toOption)
 			.map(n => new User(n))
 	}
 	def apply(name: String) {
@@ -90,10 +101,12 @@ object User {
 
 class User(val name: String) 
 
+//AuthReq adds a user field to Request[A]
 class AuthReq[A](val user: Option[User], val request: Request[A])
 extends WrappedRequest[A](request)
 
 object AuthAction extends ActionBuilder[AuthReq] {
+	//we are executing the 'block' callback 
 	def invokeBlock[A](
 		request: Request[A],
 		block: AuthReq[A] => Future[Result]): Future[Result] = {
@@ -103,6 +116,7 @@ object AuthAction extends ActionBuilder[AuthReq] {
 	}
 }
 
+/*
 object UserAction extends ActionBuilder[AuthReq] with ActionTransformer[Request, AuthReq] {
   def transform[A](request: Request[A]) = Future.successful {
 			User.auth(request)
@@ -110,3 +124,4 @@ object UserAction extends ActionBuilder[AuthReq] with ActionTransformer[Request,
 				.getOrElse{new AuthReq(None, request)}
   }
 }
+*/

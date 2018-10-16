@@ -90,10 +90,12 @@ export function prepend(str) {
 	}
 }
 
+//calls 'mergeFunc' with every field as arg
 export function merge(fields, mergeFunc) {
 	var last = fields.length - 1;
 	return function(obj) {
 		obj[fields[last]] = mergeFunc.apply(this, fields.map(f=>obj[f]));
+		//removes every 'field' in 'obj' but last one
 		fields.forEach( function(field, i) {
 			if (i === last) return;
 			delete obj[field];

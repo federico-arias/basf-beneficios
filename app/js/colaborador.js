@@ -7,6 +7,7 @@ import {runAll, href, elem, clear, runWithKeys, reduce} from './modules/dom.js';
 import {Form} from './modules/Form.js';
 import * as r from 'ramda-lens';
 import {prop} from './modules/lens.js';
+import {groupBy} from '.modules/f.js';
 
 const uid = window.location.href.split("/").pop();
 const data = get('/api/colaborador/' + uid);
@@ -114,12 +115,7 @@ function populate() {
 	const mergeOpt = (value, name) => option(value)(name);
 
 	data.then(map(merge(['id', 'beneficio'], mergeOpt)))
-		.then( function( arr ) { //groupBy('beneficio')
-			return arr.reduce( function(acc, o) {
-				acc.appendChild(o.beneficio);
-				return acc;
-			}, document.createDocumentFragment());
-		})
+		.then(groupBy('beneficio'))
 		.then(select('beneficio_id'))
 		.then(runAll('beneficio_id-select'))
 		.then(tap(on('beneficio_id', 'change', change())))
@@ -150,21 +146,11 @@ function populate() {
 				.then(rename('es_aprobado', 'resuelto_en'))
 				.then(modify('monto', number(monto)))
 				.then(modify('monto', div('col-md-12 dynamic-form')))
+				.then(duplicate('resuelto_en', 'estado'))
 				.then(modify('resuelto_en', fecha(resuelto)))
 				.then(modify('resuelto_en', div('col-md-12 dynamic-form')))
-				.then(tap(on('resuelto_en', 'change', pop)))
 				.then(runWithKeys)
 				.catch(log);
-		}
-
-		function pop(ev) {
-			/*Promise.resolve({esta_aprobado: true})
-				.then(modify('esta_aprobado', div('switch-right')))
-				.then(modify('esta_aprobado', div('switch-left')))
-				.then(modify('esta_aprobado', div('switch-title')))
-				.then(modify('esta_aprobado', div('switch-field')))
-				.then(modify('esta_aprobado', div('col-md-12 dynamic-form')))
-			*/
 		}
 	}
 }
@@ -181,7 +167,7 @@ function submit(ev) {
 	sent.then(pick(keys))
 		.then(bulkModify(keys, td))
 		.then(reduce(keys, tr))
-		.then(tap(hide(ev.target.form.parentElement.parentElement)))
+		.then(tap(hide(ev.target.form.parentElement.parentElement.parentElement.parentElement)))
 		.then(runAll('solicitudes'))
 		.catch(log);
 }

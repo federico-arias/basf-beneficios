@@ -46,6 +46,25 @@
                     <!-- /.col-lg-12 -->
                 </div>
                 <!-- /.row -->
+
+                <!-- ============================================================== -->
+                <!-- FILTERS -->
+                <!-- ============================================================== -->
+                <div class="row">
+                    <div class="col-md-12 col-lg-12 col-sm-12">
+                        <div class="white-box">
+							<select class="form-control" id="pais" name="pais" placeholder="Selecciona un país">
+								<option value="1">Chile</option>
+								<option value="2">Perú</option>
+								<option value="3">BCW</option>
+							</select>
+							<select class="form-control" name="moneda_id" placeholder="Selecciona un tipo de moneda">
+								<option value="1">Pesos</option>
+								<option value="2">Soles</option>
+							</select>
+                        </div>
+                    </div>
+                </div>
                 <!-- ============================================================== -->
                 <!-- Different data widgets -->
                 <!-- ============================================================== -->
@@ -119,143 +138,7 @@
         <!-- End Page Content -->
         <!-- ============================================================== -->
     </div>
-	<script src="https://code.highcharts.com/highcharts.js"></script>
-	<script src="https://code.highcharts.com/highcharts-more.js"></script>
-	<script type="text/javascript">
-
-var top5 = Highcharts.chart('aprobacion-por-area', {
-    chart: {
-        type: 'column'
-    },
-    title: {
-        text: 'Porcentaje de aprobación de solicitudes'
-    },
-    subtitle: {
-        text: 'Áreas con menor porcentaje de aprobación'
-    },
-    xAxis: {
-        type: 'category',
-        labels: {
-            rotation: -45,
-            style: {
-                fontSize: '13px',
-                fontFamily: 'Verdana, sans-serif'
-            }
-        }
-    },
-    yAxis: {
-        min: 0,
-        title: {
-            text: 'Porcentaje de aprobación(%)'
-        }
-    },
-    legend: {
-        enabled: false
-    },
-    tooltip: {
-        pointFormat: 'Aprobación de <b>{point.y:.1f} </b>'
-    },
-	credits: false,
-    series: [{
-        name: 'Menor aprobación por área',
-        data: [
-            ['SAF', 23.7],
-            ['ED', 16.1],
-            ['S-FP', 14.2],
-            ['S-FT', 14.0],
-        ],
-        dataLabels: {
-            enabled: true,
-            rotation: -90,
-            color: '#FFFFFF',
-            align: 'right',
-            format: '{point.y:.1f}', // one decimal
-            y: 10, // 10 pixels down from the top
-            style: {
-                fontSize: '13px',
-                fontFamily: 'Verdana, sans-serif'
-            }
-        }
-    }]
-});
-
-var top5 = Highcharts.chart('top-5-respuesta', {
-    chart: {
-        type: 'column'
-    },
-    title: {
-        text: 'Tiempo de respuesta a solicitudes'
-    },
-    subtitle: {
-        text: 'Beneficios con solicitudes con mayor demora de respuesta'
-    },
-    xAxis: {
-        type: 'category',
-        labels: {
-            rotation: -45,
-            style: {
-                fontSize: '13px',
-                fontFamily: 'Verdana, sans-serif'
-            }
-        }
-    },
-    yAxis: {
-        min: 0,
-        title: {
-            text: 'Tiempo de respuesta (días)'
-        }
-    },
-    legend: {
-        enabled: false
-    },
-    tooltip: {
-        pointFormat: 'Respuesta de <b>{point.y:.1f} días</b>'
-    },
-	credits: false,
-    series: [{
-        name: 'Tiempo de respuesta',
-        data: [
-            ['Lactancia', 23.7],
-            ['Bono escolaridad', 16.1],
-            ['Bono educación superior', 14.2],
-            ['Canasta navidad', 14.0],
-            ['Bono atención dental', 12.5],
-        ],
-        dataLabels: {
-            enabled: true,
-            rotation: -90,
-            color: '#FFFFFF',
-            align: 'right',
-            format: '{point.y:.1f}', // one decimal
-            y: 10, // 10 pixels down from the top
-            style: {
-                fontSize: '13px',
-                fontFamily: 'Verdana, sans-serif'
-            }
-        }
-    }]
-});
-
-function $(id) {return document.getElementById(id);}
-
-$("top5-select").onchange = function(ev) {
-	var d = [
-				['Lactancia', 53.7],
-				['Bono escolaridad', 16.1],
-				['Bono educación superior', 14.2],
-				['Canasta navidad', 14.0],
-				['Bono atención dental', 12.5]
-			];
-
-	var d2 = d.map( function (bar) {
-		return [bar[0], bar[1] * Math.random() * 1.2];
-	});
-
-	top5.series[0].update({data: d2});
-}
-
-	</script>
-
+	<script src="@routes.Assets.versioned("javascripts/respuesta.js")" type="text/javascript"></script>
 </body>
 
 </html>

@@ -41,6 +41,18 @@ class Api @Inject()(c: Colaborador, s: Solicitud, b: Beneficio, p: Presupuesto, 
 		s.porArea.map( solicitud => Ok(Json.toJson(solicitud)) )
 	}
 
+	def solicitudDemora = Action {
+		Ok(s.demora())
+	}
+
+	def solicitudDemoraAvg = Action {
+		Ok(s.demoraAvg())
+	}
+
+	def solicitudAprobacion = Action {
+		Ok(s.aprobacion())
+	}
+
 	def beneficio(id: String) = Action {
 		Ok(b.select(id))
 	}

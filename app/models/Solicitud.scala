@@ -72,4 +72,51 @@ class Solicitud @Inject()(dbapi: DBApi)(implicit ec: ExecutionContext) {
 			query.executeInsert()
 		}
 	}
+
+	def demora(): JsValue = {
+		val sql = """
+		(SELECT b.pais,
+			AVG((s.resuelto_en - s.solicitado_en)::integer)
+		FROM solicitud s
+		LEFT JOIN beneficio b ON s.beneficio_id = b.id
+		WHERE b.es_medido_tiempo_respuesta IS TRUE
+		AND s.solicitado_en >= date_trunc('year', now())
+		GROUP BY b.pais)
+		"""
+		JsonHelper.tableToJson(sql, db)
+	}
+
+	def demoraAvg(): JsValue = {
+		val sql = """
+		(SELECT b.id,
+			b.beneficio,
+			b.pais,
+			AVG(s.resuelto_en - s.solicitado_en) AS respuesta
+		FROM solicitud s
+		LEFT JOIN beneficio b ON s.beneficio_id = b.id
+		WHERE b.es_medido_tiempo_respuesta IS TRUE
+		AND b.es_aprobado IS TRUE
+		AND s.solicitado_en >= date_trunc('year', now())
+		GROUP BY b.pais, b.beneficio, b.id
+		ORDER BY respuesta DESC)
+		"""
+		JsonHelper.tableToJson(sql, db)
+	}
+
+	def aprobacion(): JsValue = {
+		val sql = """
+		(SELECT b.id,
+			b.beneficio,
+			b.pais,
+			SUM(s.esta_aprobado::integer) / COUNT(*)::float AS aprobacion,
+			COUNT(*) AS n
+		FROM solicitud s
+		LEFT JOIN beneficio b ON s.beneficio_id = b.id
+		WHERE b.es_aprobado IS TRUE
+		AND s.solicitado_en >= date_trunc('year', now())
+		GROUP BY b.pais, b.beneficio, b.id
+		ORDER BY aprobacion ASC)
+		"""
+		JsonHelper.tableToJson(sql, db)
+	}
 }
